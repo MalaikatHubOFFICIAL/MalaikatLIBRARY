@@ -1,5 +1,5 @@
 --==============================================================================
---          MALAIKAT UI - iOS 26 ULTRA INTERACTIVE GLASS EDITION
+--         MALAIKAT UI - iOS 26 ULTRA INTERACTIVE GLASS EDITION
 --==============================================================================
 
 -- Services Definition
@@ -110,49 +110,6 @@ local function SpringTween(instance, properties)
 	return tween
 end
 
--- Custom Interactive Ripple Surface Effect
-local function CreateRipple(parentFrame, x, y)
-	task.spawn(function()
-		local ripple = Instance.new("Frame")
-		ripple.Name = "RippleEffect"
-		ripple.AnchorPoint = Vector2.new(0.5, 0.5)
-		ripple.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-		ripple.BackgroundTransparency = 0.6
-		ripple.BorderSizePixel = 0
-		ripple.ZIndex = 20
-
-		local corner = Instance.new("UICorner")
-		corner.CornerRadius = UDim.new(1, 0)
-		corner.Parent = ripple
-
-		local absolutePosition = parentFrame.AbsolutePosition
-		ripple.Position = UDim2.new(0, x - absolutePosition.X, 0, y - absolutePosition.Y)
-		ripple.Size = UDim2.new(0, 0, 0, 0)
-		ripple.Parent = parentFrame
-
-		local targetSize = math.max(parentFrame.AbsoluteSize.X, parentFrame.AbsoluteSize.Y) * 2
-		local tween = TweenService:Create(ripple, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-			Size = UDim2.new(0, targetSize, 0, targetSize),
-			BackgroundTransparency = 1
-		})
-		tween:Play()
-		tween.Completed:Wait()
-		ripple:Destroy()
-	end)
-end
-
--- Universal Hover Glow & Scale Interaction
-local function AttachCardInteractivity(frame, stroke)
-	frame.MouseEnter:Connect(function()
-		FastTween(frame, {BackgroundTransparency = 0.25})
-		FastTween(stroke, {Color = Color3.fromRGB(0, 122, 255), Transparency = 0.4})
-	end)
-	frame.MouseLeave:Connect(function()
-		FastTween(frame, {BackgroundTransparency = 0.45})
-		FastTween(stroke, {Color = currentTheme.Stroke, Transparency = currentTheme.StrokeTransparency})
-	end)
-end
-
 --==============================================================================
 -- DYNAMIC ISLAND NOTIFICATION QUEUE SYSTEM
 --==============================================================================
@@ -242,9 +199,199 @@ local function Notify(title, message, duration)
 	end)
 end
 
+-- Drag Helper Function
+local function makeDraggable(frame)
+	local dragging = false
+	local dragInput, dragStart, startPos
+
+	frame.InputBegan:Connect(function(input)
+		if isSliderDragging then return end
+		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+			dragging = true
+			dragStart = input.Position
+			startPos = frame.Position
+
+			input.Changed:Connect(function()
+				if input.UserInputState == Enum.UserInputState.End then
+					dragging = false
+				end
+			end)
+		end
+	end)
+
+	frame.InputChanged:Connect(function(input)
+		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+			dragInput = input
+		end
+	end)
+
+	UserInputService.InputChanged:Connect(function(input)
+		if input == dragInput and dragging and not isSliderDragging then
+			local delta = input.Position - dragStart
+			local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
+			SmoothTween(frame, {Position = targetPos})
+		end
+	end)
+end
+
+-- Forward declaration of Main UI Function
+local loadMainUI
+
+--==============================================================================
+-- KEY SYSTEM WINDOW (PREVIEW MODE)
+--==============================================================================
+
+local KeyFrame = Instance.new("Frame")
+KeyFrame.Name = "KeyFrame"
+KeyFrame.Size = UDim2.new(0, 360, 0, 260)
+KeyFrame.Position = UDim2.new(0.5, -180, 0.5, -130)
+KeyFrame.BackgroundColor3 = currentTheme.MainBg
+KeyFrame.BackgroundTransparency = currentTheme.MainBgTransparency
+KeyFrame.BorderSizePixel = 0
+KeyFrame.Parent = ScreenGui
+
+local KeyCorner = Instance.new("UICorner")
+KeyCorner.CornerRadius = UDim.new(0, 20)
+KeyCorner.Parent = KeyFrame
+
+local KeyStroke = Instance.new("UIStroke")
+KeyStroke.Color = currentTheme.Stroke
+KeyStroke.Thickness = 1.2
+KeyStroke.Transparency = currentTheme.StrokeTransparency
+KeyStroke.Parent = KeyFrame
+
+makeDraggable(KeyFrame)
+
+-- Title Key System
+local KeyTitle = Instance.new("TextLabel")
+KeyTitle.Size = UDim2.new(1, 0, 0, 30)
+KeyTitle.Position = UDim2.new(0, 0, 0, 16)
+KeyTitle.BackgroundTransparency = 1
+KeyTitle.Text = "MALAIKAT UI - KEY SYSTEM"
+KeyTitle.TextColor3 = currentTheme.TextPrimary
+KeyTitle.TextSize = 16
+KeyTitle.Font = Enum.Font.GothamBold
+KeyTitle.Parent = KeyFrame
+
+-- Gray Subtitle Warning Label (MalaikatPREVIEW)
+local KeyTitleSub = Instance.new("TextLabel")
+KeyTitleSub.Size = UDim2.new(1, -30, 0, 18)
+KeyTitleSub.Position = UDim2.new(0, 15, 0, 46)
+KeyTitleSub.BackgroundTransparency = 1
+KeyTitleSub.Text = "MalaikatPREVIEW"
+KeyTitleSub.TextColor3 = Color3.fromRGB(130, 135, 150)
+KeyTitleSub.TextSize = 11
+KeyTitleSub.Font = Enum.Font.GothamMedium
+KeyTitleSub.Parent = KeyFrame
+
+-- Key Input TextBox
+local KeyInput = Instance.new("TextBox")
+KeyInput.Size = UDim2.new(1, -40, 0, 42)
+KeyInput.Position = UDim2.new(0, 20, 0, 80)
+KeyInput.BackgroundColor3 = currentTheme.InputBg
+KeyInput.PlaceholderText = "Masukkan Key..."
+KeyInput.PlaceholderColor3 = Color3.fromRGB(120, 120, 130)
+KeyInput.Text = ""
+KeyInput.TextColor3 = currentTheme.TextPrimary
+KeyInput.Font = Enum.Font.Gotham
+KeyInput.TextSize = 13
+KeyInput.Parent = KeyFrame
+
+local KeyInputCorner = Instance.new("UICorner")
+KeyInputCorner.CornerRadius = UDim.new(0, 12)
+KeyInputCorner.Parent = KeyInput
+
+local KeyInputStroke = Instance.new("UIStroke")
+KeyInputStroke.Color = currentTheme.Stroke
+KeyInputStroke.Thickness = 1
+KeyInputStroke.Transparency = 0.8
+KeyInputStroke.Parent = KeyInput
+
+-- Submit Key Button
+local SubmitBtn = Instance.new("TextButton")
+SubmitBtn.Size = UDim2.new(0.44, 0, 0, 40)
+SubmitBtn.Position = UDim2.new(0, 20, 0, 138)
+SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+SubmitBtn.Text = "Submit Key"
+SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+SubmitBtn.Font = Enum.Font.GothamBold
+SubmitBtn.TextSize = 12
+SubmitBtn.Parent = KeyFrame
+
+local SubmitCorner = Instance.new("UICorner")
+SubmitCorner.CornerRadius = UDim.new(0, 12)
+SubmitCorner.Parent = SubmitBtn
+
+-- Get Link Button
+local GetLinkBtn = Instance.new("TextButton")
+GetLinkBtn.Size = UDim2.new(0.44, 0, 0, 40)
+GetLinkBtn.Position = UDim2.new(0.56, -20, 0, 138)
+GetLinkBtn.BackgroundColor3 = currentTheme.CardBg
+GetLinkBtn.Text = "Get Link"
+GetLinkBtn.TextColor3 = currentTheme.TextPrimary
+GetLinkBtn.Font = Enum.Font.GothamBold
+GetLinkBtn.TextSize = 12
+GetLinkBtn.Parent = KeyFrame
+
+local GetLinkCorner = Instance.new("UICorner")
+GetLinkCorner.CornerRadius = UDim.new(0, 12)
+GetLinkCorner.Parent = GetLinkBtn
+
+local GetLinkStroke = Instance.new("UIStroke")
+GetLinkStroke.Color = currentTheme.Stroke
+GetLinkStroke.Thickness = 1
+GetLinkStroke.Transparency = 0.8
+GetLinkStroke.Parent = GetLinkBtn
+
+-- Gray Info Note
+local KeyInfoLbl = Instance.new("TextLabel")
+KeyInfoLbl.Size = UDim2.new(1, -40, 0, 30)
+KeyInfoLbl.Position = UDim2.new(0, 20, 0, 195)
+KeyInfoLbl.BackgroundTransparency = 1
+KeyInfoLbl.Text = "PW: malaikatui\n(Klik 'Get Link' untuk mendapatkan link key)"
+KeyInfoLbl.TextColor3 = Color3.fromRGB(130, 135, 150)
+KeyInfoLbl.TextSize = 10
+KeyInfoLbl.Font = Enum.Font.Gotham
+KeyInfoLbl.Parent = KeyFrame
+
+-- Button Events
+SubmitBtn.MouseButton1Click:Connect(function()
+	if KeyInput.Text == "malaikatui" then
+		Notify("Success", "Key Benar! Membuka UI...", 2)
+		SmoothTween(KeyFrame, {Size = UDim2.new(0, 0, 0, 0), Position = UDim2.new(0.5, 0, 0.5, 0)}).Completed:Connect(function()
+			KeyFrame:Destroy()
+			loadMainUI()
+		end)
+	else
+		Notify("Error", "Key Salah! Coba lagi.", 2)
+		SpringTween(KeyFrame, {Position = UDim2.new(0.5, -170, 0.5, -130)})
+		task.delay(0.08, function()
+			SpringTween(KeyFrame, {Position = UDim2.new(0.5, -190, 0.5, -130)})
+		end)
+		task.delay(0.16, function()
+			SpringTween(KeyFrame, {Position = UDim2.new(0.5, -180, 0.5, -130)})
+		end)
+	end
+end)
+
+GetLinkBtn.MouseButton1Click:Connect(function()
+	local link = "dsc.gg/mahub"
+	if setclipboard then
+		setclipboard(link)
+		Notify("Get Link", "Link telah disalin ke clipboard!", 3)
+	else
+		Notify("Get Link", "Buka browser: " .. link, 4)
+	end
+	if setrbxclipboard then
+		setrbxclipboard(link)
+	end
+end)
+
 --==============================================================================
 -- MAIN CONTAINER & AMBIENT GRAPHICS ENGINE
 --==============================================================================
+
+loadMainUI = function()
 
 local MainFrame = Instance.new("Frame")
 MainFrame.Name = "MainFrame"
@@ -317,6 +464,49 @@ MainStroke.Color = currentTheme.Stroke
 MainStroke.Thickness = 1.2
 MainStroke.Transparency = currentTheme.StrokeTransparency
 MainStroke.Parent = MainFrame
+
+-- Custom Ripple Effect
+local function CreateRipple(parentFrame, x, y)
+	task.spawn(function()
+		local ripple = Instance.new("Frame")
+		ripple.Name = "RippleEffect"
+		ripple.AnchorPoint = Vector2.new(0.5, 0.5)
+		ripple.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+		ripple.BackgroundTransparency = 0.6
+		ripple.BorderSizePixel = 0
+		ripple.ZIndex = 20
+
+		local corner = Instance.new("UICorner")
+		corner.CornerRadius = UDim.new(1, 0)
+		corner.Parent = ripple
+
+		local absolutePosition = parentFrame.AbsolutePosition
+		ripple.Position = UDim2.new(0, x - absolutePosition.X, 0, y - absolutePosition.Y)
+		ripple.Size = UDim2.new(0, 0, 0, 0)
+		ripple.Parent = parentFrame
+
+		local targetSize = math.max(parentFrame.AbsoluteSize.X, parentFrame.AbsoluteSize.Y) * 2
+		local tween = TweenService:Create(ripple, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+			Size = UDim2.new(0, targetSize, 0, targetSize),
+			BackgroundTransparency = 1
+		})
+		tween:Play()
+		tween.Completed:Wait()
+		ripple:Destroy()
+	end)
+end
+
+-- Hover Glow & Scale Interaction
+local function AttachCardInteractivity(frame, stroke)
+	frame.MouseEnter:Connect(function()
+		FastTween(frame, {BackgroundTransparency = 0.25})
+		FastTween(stroke, {Color = Color3.fromRGB(0, 122, 255), Transparency = 0.4})
+	end)
+	frame.MouseLeave:Connect(function()
+		FastTween(frame, {BackgroundTransparency = 0.45})
+		FastTween(stroke, {Color = currentTheme.Stroke, Transparency = currentTheme.StrokeTransparency})
+	end)
+end
 
 --==============================================================================
 -- HEADER & iOS TRAFFIC CONTROL SYSTEM
@@ -477,40 +667,6 @@ FloatStroke.Parent = FloatingBtn
 
 table.insert(ThemeElements.Strokes, FloatStroke)
 table.insert(ThemeElements.TextPrimary, FloatingBtn)
-
-local function makeDraggable(frame)
-	local dragging = false
-	local dragInput, dragStart, startPos
-
-	frame.InputBegan:Connect(function(input)
-		if isSliderDragging then return end
-		if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
-			dragging = true
-			dragStart = input.Position
-			startPos = frame.Position
-
-			input.Changed:Connect(function()
-				if input.UserInputState == Enum.UserInputState.End then
-					dragging = false
-				end
-			end)
-		end
-	end)
-
-	frame.InputChanged:Connect(function(input)
-		if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
-			dragInput = input
-		end
-	end)
-
-	UserInputService.InputChanged:Connect(function(input)
-		if input == dragInput and dragging and not isSliderDragging then
-			local delta = input.Position - dragStart
-			local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-			SmoothTween(frame, {Position = targetPos})
-		end
-	end)
-end
 
 makeDraggable(MainFrame)
 makeDraggable(FloatingBtn)
@@ -1528,7 +1684,7 @@ addButton(settingsScroll, "Unload MalaikatUI", "Close", function()
 	ScreenGui:Destroy()
 end)
 
--- Window Toggle System with Spring Scale
+-- Window Toggle System
 local isOpen = true
 local function toggleUI()
 	isOpen = not isOpen
@@ -1587,3 +1743,5 @@ task.spawn(function()
 end)
 
 Notify("MalaikatUI", "Loaded! Press '/' to toggle UI", 4)
+
+end -- End loadMainUI
