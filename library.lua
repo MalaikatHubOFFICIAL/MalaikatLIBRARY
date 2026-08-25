@@ -1,9 +1,15 @@
+--==============================================================================
+--          MALAIKAT UI - LIBRARY ENGINE (iOS 26 ULTRA GLASS)
+--==============================================================================
+
 local MalaikatLib = {}
 
-function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
-	HubTitle = HubTitle or "MALAIKAT UI"
-	KeySystemEnabled = (KeySystemEnabled == nil) and true or KeySystemEnabled
-	CorrectKey = CorrectKey or "Malaikat2026"
+function MalaikatLib:CreateWindow(Settings)
+	Settings = Settings or {}
+	local Title = Settings.Title or "MALAIKAT UI"
+	local KeySystem = Settings.KeySystem or false
+	local CorrectKey = Settings.Key or "Malaikat2026"
+	local KeyLink = Settings.KeyLink or "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
 
 	-- Services Definition
 	local TweenService = game:GetService("TweenService")
@@ -13,11 +19,12 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 	local LocalPlayer = Players.LocalPlayer
 	local Mouse = LocalPlayer:GetMouse()
 
+	-- Global State Management
 	local isSliderDragging = false
 	local isMinimized = false
-	local isKeyVerified = not KeySystemEnabled -- Jika KeySystem = false, langsung terverifikasi
+	local isKeyVerified = not KeySystem
 
-	-- Cleanup Instance Lama
+	-- Clean Up Old Instances
 	if LocalPlayer:WaitForChild("PlayerGui"):FindFirstChild("MalaikatUIGui") then
 		LocalPlayer.PlayerGui.MalaikatUIGui:Destroy()
 	end
@@ -30,7 +37,7 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 	ScreenGui.DisplayOrder = 9999
 	ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
-	-- Theme Definition
+	-- Color Palettes Engine
 	local Themes = {
 		Dark = {
 			MainBg = Color3.fromRGB(12, 13, 18),
@@ -43,30 +50,97 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 			Stroke = Color3.fromRGB(255, 255, 255),
 			StrokeTransparency = 0.88,
 			InputBg = Color3.fromRGB(16, 17, 24)
+		},
+		Light = {
+			MainBg = Color3.fromRGB(245, 245, 250),
+			MainBgTransparency = 0.1,
+			SideBg = Color3.fromRGB(230, 230, 240),
+			CardBg = Color3.fromRGB(255, 255, 255),
+			SelectorBg = Color3.fromRGB(0, 122, 255),
+			TextPrimary = Color3.fromRGB(10, 10, 15),
+			TextSecondary = Color3.fromRGB(100, 105, 120),
+			Stroke = Color3.fromRGB(0, 0, 0),
+			StrokeTransparency = 0.9,
+			InputBg = Color3.fromRGB(235, 235, 245)
 		}
 	}
+
+	local currentThemeName = "Dark"
 	local currentTheme = Themes.Dark
 
-	-- Animations Helper
+	local ThemeElements = {
+		Cards = {},
+		Strokes = {},
+		TextPrimary = {},
+		TextSecondary = {},
+		InputBoxes = {}
+	}
+
+	-- Animation Math Helpers
+	local FastTweenInfo = TweenInfo.new(0.18, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
+	local SpringTweenInfo = TweenInfo.new(0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
+	local UltraSmoothTweenInfo = TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
+
 	local function FastTween(inst, props)
-		local t = TweenService:Create(inst, TweenInfo.new(0.18, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), props)
+		local t = TweenService:Create(inst, FastTweenInfo, props)
 		t:Play()
 		return t
 	end
 
 	local function SmoothTween(inst, props)
-		local t = TweenService:Create(inst, TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out), props)
+		local t = TweenService:Create(inst, UltraSmoothTweenInfo, props)
 		t:Play()
 		return t
 	end
 
 	local function SpringTween(inst, props)
-		local t = TweenService:Create(inst, TweenInfo.new(0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out), props)
+		local t = TweenService:Create(inst, SpringTweenInfo, props)
 		t:Play()
 		return t
 	end
 
-	-- Notifications System
+	local function CreateRipple(parentFrame, x, y)
+		task.spawn(function()
+			local ripple = Instance.new("Frame")
+			ripple.Name = "RippleEffect"
+			ripple.AnchorPoint = Vector2.new(0.5, 0.5)
+			ripple.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
+			ripple.BackgroundTransparency = 0.6
+			ripple.BorderSizePixel = 0
+			ripple.ZIndex = 20
+
+			local corner = Instance.new("UICorner")
+			corner.CornerRadius = UDim.new(1, 0)
+			corner.Parent = ripple
+
+			local absolutePosition = parentFrame.AbsolutePosition
+			ripple.Position = UDim2.new(0, x - absolutePosition.X, 0, y - absolutePosition.Y)
+			ripple.Size = UDim2.new(0, 0, 0, 0)
+			ripple.Parent = parentFrame
+
+			local targetSize = math.max(parentFrame.AbsoluteSize.X, parentFrame.AbsoluteSize.Y) * 2
+			local tween = TweenService:Create(ripple, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
+				Size = UDim2.new(0, targetSize, 0, targetSize),
+				BackgroundTransparency = 1
+			})
+			tween:Play()
+			tween.Completed:Wait()
+			ripple:Destroy()
+		end)
+	end
+
+	local function AttachCardInteractivity(frame, stroke)
+		frame.MouseEnter:Connect(function()
+			FastTween(frame, {BackgroundTransparency = 0.25})
+			FastTween(stroke, {Color = Color3.fromRGB(0, 122, 255), Transparency = 0.4})
+		end)
+		frame.MouseLeave:Connect(function()
+			FastTween(frame, {BackgroundTransparency = 0.45})
+			FastTween(stroke, {Color = currentTheme.Stroke, Transparency = currentTheme.StrokeTransparency})
+		end)
+	end
+
+	-- Dynamic Island Notification Queue System
 	local NotifHolder = Instance.new("Frame")
 	NotifHolder.Name = "NotifHolder"
 	NotifHolder.Size = UDim2.new(0, 290, 1, -20)
@@ -79,11 +153,13 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 	NotifLayout.VerticalAlignment = Enum.VerticalAlignment.Bottom
 	NotifLayout.HorizontalAlignment = Enum.HorizontalAlignment.Right
 	NotifLayout.Padding = UDim.new(0, 10)
+	NotifLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	NotifLayout.Parent = NotifHolder
 
-	local function Notify(title, message, duration)
+	local function Notify(notifTitle, message, duration)
 		duration = duration or 3.5
 		local Card = Instance.new("Frame")
+		Card.Name = "NotifCard"
 		Card.Size = UDim2.new(0, 0, 0, 58)
 		Card.BackgroundColor3 = currentTheme.SideBg
 		Card.BackgroundTransparency = 0.15
@@ -106,11 +182,15 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 		GlowBar.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
 		GlowBar.Parent = Card
 
+		local GlowCorner = Instance.new("UICorner")
+		GlowCorner.CornerRadius = UDim.new(1, 0)
+		GlowCorner.Parent = GlowBar
+
 		local TitleLbl = Instance.new("TextLabel")
 		TitleLbl.Size = UDim2.new(1, -30, 0, 18)
 		TitleLbl.Position = UDim2.new(0, 26, 0, 10)
 		TitleLbl.BackgroundTransparency = 1
-		TitleLbl.Text = title
+		TitleLbl.Text = notifTitle
 		TitleLbl.TextColor3 = currentTheme.TextPrimary
 		TitleLbl.TextSize = 13
 		TitleLbl.Font = Enum.Font.GothamBold
@@ -135,7 +215,7 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 		end)
 	end
 
-	-- Key System Interface (Hanya Muncul jika KeySystemEnabled = true)
+	-- Key System Dialog UI
 	local KeyFrame = Instance.new("Frame")
 	KeyFrame.Name = "KeySystemFrame"
 	KeyFrame.Size = UDim2.new(0, 360, 0, 220)
@@ -166,20 +246,36 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 	KeyTitle.Font = Enum.Font.GothamBold
 	KeyTitle.Parent = KeyFrame
 
+	local KeySub = Instance.new("TextLabel")
+	KeySub.Size = UDim2.new(1, -40, 0, 30)
+	KeySub.Position = UDim2.new(0, 20, 0, 46)
+	KeySub.BackgroundTransparency = 1
+	KeySub.Text = "Masukkan Kunci Akses untuk Menggunakan Script ini."
+	KeySub.TextColor3 = currentTheme.TextSecondary
+	KeySub.TextSize = 11
+	KeySub.Font = Enum.Font.Gotham
+	KeySub.TextWrapped = true
+	KeySub.Parent = KeyFrame
+
 	local KeyInputBox = Instance.new("TextBox")
 	KeyInputBox.Size = UDim2.new(0, 300, 0, 38)
 	KeyInputBox.Position = UDim2.new(0.5, -150, 0, 88)
 	KeyInputBox.BackgroundColor3 = currentTheme.InputBg
-	KeyInputBox.PlaceholderText = "Enter key here..."
+	KeyInputBox.PlaceholderText = "Paste key here..."
+	KeyInputBox.PlaceholderColor3 = Color3.fromRGB(130, 130, 140)
 	KeyInputBox.Text = ""
 	KeyInputBox.TextColor3 = currentTheme.TextPrimary
 	KeyInputBox.Font = Enum.Font.Gotham
 	KeyInputBox.TextSize = 12
 	KeyInputBox.Parent = KeyFrame
 
+	local KeyInputCorner = Instance.new("UICorner")
+	KeyInputCorner.CornerRadius = UDim.new(0, 10)
+	KeyInputCorner.Parent = KeyInputBox
+
 	local SubmitKeyBtn = Instance.new("TextButton")
 	SubmitKeyBtn.Size = UDim2.new(0, 140, 0, 36)
-	SubmitKeyBtn.Position = UDim2.new(0.5, -70, 0, 142)
+	SubmitKeyBtn.Position = UDim2.new(0.5, -150, 0, 142)
 	SubmitKeyBtn.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
 	SubmitKeyBtn.Text = "Submit Key"
 	SubmitKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
@@ -187,15 +283,72 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 	SubmitKeyBtn.TextSize = 12
 	SubmitKeyBtn.Parent = KeyFrame
 
-	-- Main Window Setup
+	local SubmitCorner = Instance.new("UICorner")
+	SubmitCorner.CornerRadius = UDim.new(0, 10)
+	SubmitCorner.Parent = SubmitKeyBtn
+
+	local GetKeyBtn = Instance.new("TextButton")
+	GetKeyBtn.Size = UDim2.new(0, 150, 0, 36)
+	GetKeyBtn.Position = UDim2.new(0.5, 0, 0, 142)
+	GetKeyBtn.BackgroundColor3 = currentTheme.CardBg
+	GetKeyBtn.Text = "Get Key Link"
+	GetKeyBtn.TextColor3 = currentTheme.TextPrimary
+	GetKeyBtn.Font = Enum.Font.GothamMedium
+	GetKeyBtn.TextSize = 12
+	GetKeyBtn.Parent = KeyFrame
+
+	local GetCorner = Instance.new("UICorner")
+	GetCorner.CornerRadius = UDim.new(0, 10)
+	GetCorner.Parent = GetKeyBtn
+
+	-- Main Container Structure
 	local MainFrame = Instance.new("Frame")
 	MainFrame.Name = "MainFrame"
 	MainFrame.Size = UDim2.new(0, 600, 0, 410)
 	MainFrame.Position = UDim2.new(0.5, -300, 0.5, -205)
 	MainFrame.BackgroundColor3 = currentTheme.MainBg
 	MainFrame.BackgroundTransparency = currentTheme.MainBgTransparency
+	MainFrame.BorderSizePixel = 0
+	MainFrame.ClipsDescendants = false
 	MainFrame.Visible = false
 	MainFrame.Parent = ScreenGui
+
+	local AmbientContainer = Instance.new("Frame")
+	AmbientContainer.Size = UDim2.new(1, 0, 1, 0)
+	AmbientContainer.BackgroundTransparency = 1
+	AmbientContainer.ClipsDescendants = true
+	AmbientContainer.ZIndex = 0
+	AmbientContainer.Parent = MainFrame
+
+	local AmbientCorner = Instance.new("UICorner")
+	AmbientCorner.CornerRadius = UDim.new(0, 22)
+	AmbientCorner.Parent = AmbientContainer
+
+	local Orb1 = Instance.new("ImageLabel")
+	Orb1.Size = UDim2.new(0, 320, 0, 320)
+	Orb1.Position = UDim2.new(-0.2, 0, -0.2, 0)
+	Orb1.BackgroundTransparency = 1
+	Orb1.Image = "rbxassetid://5810228302"
+	Orb1.ImageColor3 = Color3.fromRGB(0, 122, 255)
+	Orb1.ImageTransparency = 0.55
+	Orb1.ZIndex = 0
+	Orb1.Parent = AmbientContainer
+
+	local Orb2 = Instance.new("ImageLabel")
+	Orb2.Size = UDim2.new(0, 340, 0, 340)
+	Orb2.Position = UDim2.new(0.6, 0, 0.5, 0)
+	Orb2.BackgroundTransparency = 1
+	Orb2.Image = "rbxassetid://5810228302"
+	Orb2.ImageColor3 = Color3.fromRGB(160, 0, 255)
+	Orb2.ImageTransparency = 0.6
+	Orb2.ZIndex = 0
+	Orb2.Parent = AmbientContainer
+
+	RunService.RenderStepped:Connect(function()
+		local t = tick()
+		Orb1.Position = UDim2.new(-0.2 + math.sin(t * 0.7) * 0.06, 0, -0.2 + math.cos(t * 0.5) * 0.06, 0)
+		Orb2.Position = UDim2.new(0.6 + math.cos(t * 0.6) * 0.07, 0, 0.5 + math.sin(t * 0.8) * 0.06, 0)
+	end)
 
 	local MainCorner = Instance.new("UICorner")
 	MainCorner.CornerRadius = UDim.new(0, 22)
@@ -207,33 +360,130 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 	MainStroke.Transparency = currentTheme.StrokeTransparency
 	MainStroke.Parent = MainFrame
 
-	-- Header Title
+	-- Header Control System
+	local TitleContainer = Instance.new("Frame")
+	TitleContainer.Size = UDim2.new(0, 350, 0, 30)
+	TitleContainer.Position = UDim2.new(0, 16, 0, 10)
+	TitleContainer.BackgroundTransparency = 1
+	TitleContainer.ZIndex = 2
+	TitleContainer.Parent = MainFrame
+
+	local TitleLayout = Instance.new("UIListLayout")
+	TitleLayout.FillDirection = Enum.FillDirection.Horizontal
+	TitleLayout.SortOrder = Enum.SortOrder.LayoutOrder
+	TitleLayout.Padding = UDim.new(0, 6)
+	TitleLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+	TitleLayout.Parent = TitleContainer
+
 	local TitleMalaikat = Instance.new("TextLabel")
-	TitleMalaikat.Size = UDim2.new(0, 200, 0, 30)
-	TitleMalaikat.Position = UDim2.new(0, 16, 0, 10)
+	TitleMalaikat.Size = UDim2.new(0, 0, 1, 0)
+	TitleMalaikat.AutomaticSize = Enum.AutomaticSize.X
 	TitleMalaikat.BackgroundTransparency = 1
-	TitleMalaikat.Text = HubTitle
+	TitleMalaikat.Text = Title
 	TitleMalaikat.TextColor3 = currentTheme.TextPrimary
 	TitleMalaikat.TextSize = 16
 	TitleMalaikat.Font = Enum.Font.GothamBold
-	TitleMalaikat.TextXAlignment = Enum.TextXAlignment.Left
-	TitleMalaikat.Parent = MainFrame
+	TitleMalaikat.LayoutOrder = 1
+	TitleMalaikat.ZIndex = 2
+	TitleMalaikat.Parent = TitleContainer
 
-	-- Sidebar Navigation
+	local WindowControls = Instance.new("Frame")
+	WindowControls.Size = UDim2.new(0, 68, 0, 26)
+	WindowControls.Position = UDim2.new(1, -80, 0, 10)
+	WindowControls.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+	WindowControls.BackgroundTransparency = 0.4
+	WindowControls.ZIndex = 2
+	WindowControls.Parent = MainFrame
+
+	local ControlCorner = Instance.new("UICorner")
+	ControlCorner.CornerRadius = UDim.new(1, 0)
+	ControlCorner.Parent = WindowControls
+
+	local ControlLayout = Instance.new("UIListLayout")
+	ControlLayout.FillDirection = Enum.FillDirection.Horizontal
+	ControlLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+	ControlLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+	ControlLayout.Padding = UDim.new(0, 8)
+	ControlLayout.Parent = WindowControls
+
+	local MinimizeBtn = Instance.new("TextButton")
+	MinimizeBtn.Size = UDim2.new(0, 14, 0, 14)
+	MinimizeBtn.BackgroundColor3 = Color3.fromRGB(255, 179, 0)
+	MinimizeBtn.Text = ""
+	MinimizeBtn.Parent = WindowControls
+
+	local MinCorner = Instance.new("UICorner")
+	MinCorner.CornerRadius = UDim.new(1, 0)
+	MinCorner.Parent = MinimizeBtn
+
+	local CloseBtn = Instance.new("TextButton")
+	CloseBtn.Size = UDim2.new(0, 14, 0, 14)
+	CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 69, 58)
+	CloseBtn.Text = ""
+	CloseBtn.Parent = WindowControls
+
+	local CloseCorner = Instance.new("UICorner")
+	CloseCorner.CornerRadius = UDim.new(1, 0)
+	CloseCorner.Parent = CloseBtn
+
+	-- Dragging Physics Engine
+	local function makeDraggable(frame)
+		local dragging, dragInput, dragStart, startPos
+		frame.InputBegan:Connect(function(input)
+			if isSliderDragging then return end
+			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
+				dragging = true
+				dragStart = input.Position
+				startPos = frame.Position
+				input.Changed:Connect(function()
+					if input.UserInputState == Enum.UserInputState.End then dragging = false end
+				end)
+			end
+		end)
+		frame.InputChanged:Connect(function(input)
+			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
+				dragInput = input
+			end
+		end)
+		UserInputService.InputChanged:Connect(function(input)
+			if input == dragInput and dragging and not isSliderDragging then
+				local delta = input.Position - dragStart
+				SmoothTween(frame, {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)})
+			end
+		end)
+	end
+
+	makeDraggable(MainFrame)
+	makeDraggable(KeyFrame)
+
+	-- Sidebar & Content Structure
 	local Sidebar = Instance.new("Frame")
 	Sidebar.Size = UDim2.new(0, 140, 1, -58)
 	Sidebar.Position = UDim2.new(0, 12, 0, 44)
 	Sidebar.BackgroundColor3 = currentTheme.SideBg
 	Sidebar.BackgroundTransparency = 0.4
+	Sidebar.ZIndex = 2
 	Sidebar.Parent = MainFrame
 
 	local SideCorner = Instance.new("UICorner")
 	SideCorner.CornerRadius = UDim.new(0, 16)
 	SideCorner.Parent = Sidebar
 
+	local TabSelector = Instance.new("Frame")
+	TabSelector.Size = UDim2.new(1, -12, 0, 34)
+	TabSelector.Position = UDim2.new(0, 6, 0, 6)
+	TabSelector.BackgroundColor3 = currentTheme.SelectorBg
+	TabSelector.ZIndex = 1
+	TabSelector.Parent = Sidebar
+
+	local SelectorCorner = Instance.new("UICorner")
+	SelectorCorner.CornerRadius = UDim.new(0, 10)
+	SelectorCorner.Parent = TabSelector
+
 	local ButtonsContainer = Instance.new("Frame")
 	ButtonsContainer.Size = UDim2.new(1, 0, 1, 0)
 	ButtonsContainer.BackgroundTransparency = 1
+	ButtonsContainer.ZIndex = 2
 	ButtonsContainer.Parent = Sidebar
 
 	local SideList = Instance.new("UIListLayout")
@@ -245,29 +495,61 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 	ContentArea.Size = UDim2.new(1, -172, 1, -58)
 	ContentArea.Position = UDim2.new(0, 160, 0, 44)
 	ContentArea.BackgroundTransparency = 1
+	ContentArea.ClipsDescendants = true
+	ContentArea.ZIndex = 2
 	ContentArea.Parent = MainFrame
 
 	local WindowAPI = {}
 	local Tabs = {}
-	local FirstTab = true
+	local TabButtons = {}
+	local currentTabName = ""
+	local tabIndexCounter = 0
 
-	-- FUNGSI UNTUK MEMBUAT TAB BARU
-	function WindowAPI:CreateTab(TabName)
+	local function updateTabSelector(tabName, immediate)
+		local btn = TabButtons[tabName]
+		if not btn then return end
+		task.spawn(function()
+			task.wait()
+			local targetY = btn.AbsolutePosition.Y - Sidebar.AbsolutePosition.Y
+			local targetSize = btn.AbsoluteSize.Y
+			if immediate then
+				TabSelector.Position = UDim2.new(0, 6, 0, targetY)
+				TabSelector.Size = UDim2.new(1, -12, 0, targetSize)
+			else
+				SpringTween(TabSelector, {Position = UDim2.new(0, 6, 0, targetY), Size = UDim2.new(1, -12, 0, targetSize)})
+			end
+		end)
+	end
+
+	-- Function to Create Dynamic Tab
+	function WindowAPI:CreateTab(tabName)
+		tabIndexCounter = tabIndexCounter + 1
+		local isFirst = (tabIndexCounter == 1)
+
 		local TabBtn = Instance.new("TextButton")
 		TabBtn.Size = UDim2.new(1, -12, 0, 34)
 		TabBtn.BackgroundTransparency = 1
-		TabBtn.Text = TabName
-		TabBtn.TextColor3 = FirstTab and Color3.fromRGB(255, 255, 255) or currentTheme.TextSecondary
+		TabBtn.Text = tabName
+		TabBtn.TextColor3 = isFirst and Color3.fromRGB(255, 255, 255) or currentTheme.TextSecondary
 		TabBtn.Font = Enum.Font.GothamMedium
 		TabBtn.TextSize = 13
+		TabBtn.LayoutOrder = tabIndexCounter
+		TabBtn.ZIndex = 3
 		TabBtn.Parent = ButtonsContainer
+
+		local TabGroup = Instance.new("CanvasGroup")
+		TabGroup.Size = UDim2.new(1, 0, 1, 0)
+		TabGroup.BackgroundTransparency = 1
+		TabGroup.GroupTransparency = isFirst and 0 or 1
+		TabGroup.Visible = isFirst
+		TabGroup.Parent = ContentArea
 
 		local Scroll = Instance.new("ScrollingFrame")
 		Scroll.Size = UDim2.new(1, 0, 1, 0)
 		Scroll.BackgroundTransparency = 1
 		Scroll.ScrollBarThickness = 3
-		Scroll.Visible = FirstTab
-		Scroll.Parent = ContentArea
+		Scroll.ScrollBarImageColor3 = Color3.fromRGB(150, 150, 170)
+		Scroll.Parent = TabGroup
 
 		local ScrollLayout = Instance.new("UIListLayout")
 		ScrollLayout.Padding = UDim.new(0, 8)
@@ -277,42 +559,70 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 			Scroll.CanvasSize = UDim2.new(0, 0, 0, ScrollLayout.AbsoluteContentSize.Y + 15)
 		end)
 
-		TabBtn.MouseButton1Click:Connect(function()
-			for _, t in pairs(Tabs) do
-				t.Scroll.Visible = false
-				FastTween(t.Btn, {TextColor3 = currentTheme.TextSecondary})
-			end
-			Scroll.Visible = true
-			FastTween(TabBtn, {TextColor3 = Color3.fromRGB(255, 255, 255)})
-		end)
+		Tabs[tabName] = {Group = TabGroup, Scroll = Scroll, Index = tabIndexCounter}
+		TabButtons[tabName] = TabBtn
 
-		FirstTab = false
-		table.insert(Tabs, {Scroll = Scroll, Btn = TabBtn})
+		if isFirst then
+			currentTabName = tabName
+			task.delay(0.1, function() updateTabSelector(tabName, true) end)
+		end
+
+		TabBtn.MouseButton1Click:Connect(function()
+			if currentTabName == tabName then return end
+			updateTabSelector(tabName, false)
+			for name, btn in pairs(TabButtons) do FastTween(btn, {TextColor3 = currentTheme.TextSecondary}) end
+			FastTween(TabBtn, {TextColor3 = Color3.fromRGB(255, 255, 255)})
+
+			Tabs[currentTabName].Group.Visible = false
+			Tabs[currentTabName].Group.GroupTransparency = 1
+			currentTabName = tabName
+			TabGroup.Visible = true
+			SmoothTween(TabGroup, {GroupTransparency = 0})
+		end)
 
 		local TabAPI = {}
 
-		-- 1. ADD BUTTON
-		function TabAPI:AddButton(text, rightText, callback)
+		function TabAPI:AddButton(text, rightLabel, callback)
 			local Frame = Instance.new("Frame")
 			Frame.Size = UDim2.new(1, -8, 0, 42)
 			Frame.BackgroundColor3 = currentTheme.CardBg
 			Frame.BackgroundTransparency = 0.45
+			Frame.ClipsDescendants = true
 			Frame.Parent = Scroll
 
 			local Corner = Instance.new("UICorner")
 			Corner.CornerRadius = UDim.new(0, 12)
 			Corner.Parent = Frame
 
-			local Title = Instance.new("TextLabel")
-			Title.Size = UDim2.new(0.5, 0, 1, 0)
-			Title.Position = UDim2.new(0, 12, 0, 0)
-			Title.BackgroundTransparency = 1
-			Title.Text = text
-			Title.TextColor3 = currentTheme.TextPrimary
-			Title.Font = Enum.Font.GothamMedium
-			Title.TextSize = 13
-			Title.TextXAlignment = Enum.TextXAlignment.Left
-			Title.Parent = Frame
+			local Stroke = Instance.new("UIStroke")
+			Stroke.Color = currentTheme.Stroke
+			Stroke.Thickness = 1
+			Stroke.Transparency = currentTheme.StrokeTransparency
+			Stroke.Parent = Frame
+
+			AttachCardInteractivity(Frame, Stroke)
+
+			local TitleLbl = Instance.new("TextLabel")
+			TitleLbl.Size = UDim2.new(0.5, -10, 1, 0)
+			TitleLbl.Position = UDim2.new(0, 12, 0, 0)
+			TitleLbl.BackgroundTransparency = 1
+			TitleLbl.Text = text
+			TitleLbl.TextColor3 = currentTheme.TextPrimary
+			TitleLbl.Font = Enum.Font.GothamMedium
+			TitleLbl.TextSize = 13
+			TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
+			TitleLbl.Parent = Frame
+
+			local RightLbl = Instance.new("TextLabel")
+			RightLbl.Size = UDim2.new(0, 80, 1, 0)
+			RightLbl.Position = UDim2.new(1, -92, 0, 0)
+			RightLbl.BackgroundTransparency = 1
+			RightLbl.Text = rightLabel or "button"
+			RightLbl.TextColor3 = Color3.fromRGB(0, 122, 255)
+			RightLbl.Font = Enum.Font.GothamMedium
+			RightLbl.TextSize = 11
+			RightLbl.TextXAlignment = Enum.TextXAlignment.Right
+			RightLbl.Parent = Frame
 
 			local Btn = Instance.new("TextButton")
 			Btn.Size = UDim2.new(1, 0, 1, 0)
@@ -321,15 +631,13 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 			Btn.Parent = Frame
 
 			Btn.MouseButton1Click:Connect(function()
-				SpringTween(Frame, {Size = UDim2.new(1, -12, 0, 40)})
-				task.delay(0.1, function()
-					SpringTween(Frame, {Size = UDim2.new(1, -8, 0, 42)})
-				end)
+				CreateRipple(Frame, Mouse.X, Mouse.Y)
+				SpringTween(Frame, {Size = UDim2.new(1, -14, 0, 39)})
+				task.delay(0.1, function() SpringTween(Frame, {Size = UDim2.new(1, -8, 0, 42)}) end)
 				callback()
 			end)
 		end
 
-		-- 2. ADD TOGGLE
 		function TabAPI:AddToggle(text, defaultState, callback)
 			local state = defaultState or false
 			local Frame = Instance.new("Frame")
@@ -338,9 +646,17 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 			Frame.BackgroundTransparency = 0.45
 			Frame.Parent = Scroll
 
-			local Corner = Instance.new("UICorner")
-			Corner.CornerRadius = UDim.new(0, 12)
-			Corner.Parent = Frame
+			local FrameCorner = Instance.new("UICorner")
+			FrameCorner.CornerRadius = UDim.new(0, 12)
+			FrameCorner.Parent = Frame
+
+			local FrameStroke = Instance.new("UIStroke")
+			FrameStroke.Color = currentTheme.Stroke
+			FrameStroke.Thickness = 1
+			FrameStroke.Transparency = currentTheme.StrokeTransparency
+			FrameStroke.Parent = Frame
+
+			AttachCardInteractivity(Frame, FrameStroke)
 
 			local Label = Instance.new("TextLabel")
 			Label.Size = UDim2.new(1, -60, 1, 0)
@@ -387,7 +703,6 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 			end)
 		end
 
-		-- 3. ADD SLIDER
 		function TabAPI:AddSlider(text, min, max, defaultVal, callback)
 			local Frame = Instance.new("Frame")
 			Frame.Size = UDim2.new(1, -8, 0, 44)
@@ -395,9 +710,17 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 			Frame.BackgroundTransparency = 0.45
 			Frame.Parent = Scroll
 
-			local Corner = Instance.new("UICorner")
-			Corner.CornerRadius = UDim.new(0, 12)
-			Corner.Parent = Frame
+			local FrameCorner = Instance.new("UICorner")
+			FrameCorner.CornerRadius = UDim.new(0, 12)
+			FrameCorner.Parent = Frame
+
+			local FrameStroke = Instance.new("UIStroke")
+			FrameStroke.Color = currentTheme.Stroke
+			FrameStroke.Thickness = 1
+			FrameStroke.Transparency = currentTheme.StrokeTransparency
+			FrameStroke.Parent = Frame
+
+			AttachCardInteractivity(Frame, FrameStroke)
 
 			local Label = Instance.new("TextLabel")
 			Label.Size = UDim2.new(0.4, 0, 1, 0)
@@ -455,6 +778,7 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 			SliderBack.InputBegan:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 					isLocalDragging = true
+					isSliderDragging = true
 					updateSlider(input)
 				end
 			end)
@@ -462,6 +786,7 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 			UserInputService.InputEnded:Connect(function(input)
 				if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 					isLocalDragging = false
+					isSliderDragging = false
 				end
 			end)
 
@@ -475,7 +800,7 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 		return TabAPI
 	end
 
-	-- Logic Inisialisasi UI
+	-- Logic Boot Loader Window
 	local function OpenMainUI()
 		MainFrame.Visible = true
 		MainFrame.Size = UDim2.new(0, 0, 0, 0)
@@ -484,23 +809,43 @@ function MalaikatLib:CreateWindow(HubTitle, KeySystemEnabled, CorrectKey)
 			Size = UDim2.new(0, 600, 0, 410),
 			Position = UDim2.new(0.5, -300, 0.5, -205)
 		})
-		Notify("MalaikatUI", "UI Loaded Successfully!", 3)
+		Notify("MalaikatUI", "Press '/' to toggle interface", 4)
 	end
 
-	if KeySystemEnabled then
+	-- Key System Execution Events
+	if KeySystem then
 		KeyFrame.Visible = true
+		SpringTween(KeyFrame, {Size = UDim2.new(0, 360, 0, 220)})
+
 		SubmitKeyBtn.MouseButton1Click:Connect(function()
 			if KeyInputBox.Text == CorrectKey then
 				isKeyVerified = true
-				KeyFrame:Destroy()
-				OpenMainUI()
+				Notify("Security", "Correct Key!", 2)
+				local dismiss = SmoothTween(KeyFrame, {Size = UDim2.new(0, 0, 0, 0), BackgroundTransparency = 1})
+				dismiss.Completed:Connect(function()
+					KeyFrame:Destroy()
+					OpenMainUI()
+				end)
 			else
-				Notify("Key System", "Wrong Key!", 2)
+				Notify("Security", "Invalid Key!", 2)
+			end
+		end)
+
+		GetKeyBtn.MouseButton1Click:Connect(function()
+			if setclipboard then
+				setclipboard(KeyLink)
+				Notify("Key System", "Link copied to clipboard!", 2)
+			else
+				Notify("Key System", "Clipboard not supported!", 2)
 			end
 		end)
 	else
 		OpenMainUI()
 	end
+
+	CloseBtn.MouseButton1Click:Connect(function()
+		MainFrame.Visible = not MainFrame.Visible
+	end)
 
 	return WindowAPI
 end
