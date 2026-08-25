@@ -21,13 +21,13 @@
 ### 🚀 Panduan Inisialisasi
 
 ```lua
-local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua)"))
+local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua"))()
 
 local Window = MalaikatLib:CreateWindow({
     Title = "Malaikat HUB v2.0",
     KeySystem = true,
     Key = "Malaikat2026",
-    KeyLink = "[https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY](https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY)"
+    KeyLink = "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
 })
 ```
 
@@ -96,7 +96,7 @@ end)
 
 ### 👁️ Skrip Preview
 ```lua
-loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua)"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua"))()
 ```
 
 ---
@@ -118,13 +118,13 @@ loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/
 ### 🚀 Quick Start Guide
 
 ```lua
-local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua)"))
+local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua"))()
 
 local Window = MalaikatLib:CreateWindow({
     Title = "Malaikat HUB v2.0",
     KeySystem = true,
     Key = "Malaikat2026",
-    KeyLink = "[https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY](https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY)"
+    KeyLink = "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
 })
 ```
 
@@ -193,7 +193,7 @@ end)
 
 ### 👁️ Preview Script
 ```lua
-loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua)"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua"))()
 ```
 
 ---
@@ -215,11 +215,80 @@ loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/
 ### 🚀 Panduan Penggunaan Pantas
 
 ```lua
-local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua)"))
+local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua"))()
 
 local Window = MalaikatLib:CreateWindow({
     Title = "Malaikat HUB v2.0",
     KeySystem = true,
     Key = "Malaikat2026",
-    KeyLink = "[https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY](https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY)"
+    KeyLink = "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
 })
+```
+
+---
+
+### 🧩 Panduan Komponen UI
+
+#### 1. Cipta Tab Navigasi & Tajuk Bahagian
+```lua
+local MainTab = Window:CreateTab("Main Features")
+local SettingsTab = Window:CreateTab("Settings")
+
+MainTab:AddSectionHeader("Pilihan Utama")
+```
+
+#### 2. Butang (Button)
+```lua
+MainTab:AddButton("Teleport ke Spawn", "Teleport", function()
+    print("Berjaya teleport ke spawn!")
+end)
+```
+
+#### 3. Suis (Toggle)
+```lua
+MainTab:AddToggle("Auto Farm Coins", false, function(Value)
+    print("Status Auto Farm:", Value)
+end)
+```
+
+#### 4. Pengelongsor (Slider)
+```lua
+MainTab:AddSlider("Pengubah WalkSpeed", 16, 250, 16, function(Value)
+    game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+end)
+```
+
+#### 5. Menu Pilihan (Dropdown)
+```lua
+MainTab:AddDropdown("Pilih Senjata", {"Sword", "Bow", "Magic Staff"}, "Sword", function(Selected)
+    print("Senjata dipilih:", Selected)
+end)
+```
+
+#### 6. Kotak Input Teks (Input Box)
+```lua
+MainTab:AddInput("Teleport ke Pemain", "Taip Username...", function(Text)
+    print("Teleport ke:", Text)
+end)
+```
+
+#### 7. Pemilih Warna (Color Picker)
+```lua
+SettingsTab:AddColorPicker("Warna ESP Overlay", Color3.fromRGB(0, 122, 255), function(Color)
+    print("Warna ESP ditukar:", Color)
+end)
+```
+
+#### 8. Tetapan Kunci (Keybind)
+```lua
+SettingsTab:AddKeybind("Tetapan Tombol UI", "T", function(KeyCode)
+    print("UI diikat pada tombol:", KeyCode.Name)
+end)
+```
+
+---
+
+### 👁️ Skrip Pratonton (Preview)
+```lua
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua"))()
+```
