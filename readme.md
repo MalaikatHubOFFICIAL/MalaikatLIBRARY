@@ -6,139 +6,223 @@
 
 ## 🇮🇩 Bahasa Indonesia
 
-Library UI Roblox modern dengan tampilan **Frosted Glass Engine** yang dilengkapi animasi super smooth, physics-engine dragging, key system, dan loading screen.
+**MalaikatUI** adalah library UI Roblox yang dirancang untuk memberikan pengalaman eksekusi skrip terbaik dengan antarmuka bertema *Frosted Glass*. Library ini berfokus pada responsivitas tinggi, kestabilan elemen, dan animasi berbasis *spring physics* yang sangat mulus tanpa membebani performa game.
 
-### 🚀 Cara Menggunakan (Quick Start)
-
-Panggil library ini di script Roblox kamu menggunakan kode berikut:
+### 🚀 Panduan Penggunaan Lengkap
 
 ```lua
--- 1. Import Library
-local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))()
+-- Import Library
+local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua)"))()
 
--- 2. Buat Window Utama
+-- Buat Window Utama
+-- Parameter: (Judul UI, Aktifkan Key System?, Kunci Akses)
 local Window = MalaikatLib:CreateWindow("Malaikat HUB", true, "Malaikat2026")
 
--- 3. Buat Tab
-local MainTab = Window:CreateTab("Main")
-local SettingsTab = Window:CreateTab("Settings")
+-- Buat Tab Baru
+local MainTab = Window:CreateTab("Main Features")
+local PlayerTab = Window:CreateTab("Player Stats")
 
--- 4. Tambahkan Komponen
-MainTab:AddButton("Test Button", "Click", function()
-    print("Button Clicked!")
+-- 1. Tombol (Button)
+MainTab:AddButton("Teleport to Spawn", "Teleport", function()
+    print("Teleporting player...")
 end)
 
-MainTab:AddToggle("preview_toggle", "Auto Farm", false, function(Value)
-    print("Toggle State:", Value)
+-- 2. Sakelar (Toggle)
+MainTab:AddToggle("Auto Farm Kills", false, function(Value)
+    print("Auto Farm status:", Value)
 end)
 
-MainTab:AddSlider("Walkspeed", 16, 200, 16, function(Value)
+-- 3. Penggeser Angka (Slider)
+PlayerTab:AddSlider("WalkSpeed Modifier", 16, 250, 16, function(Value)
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+end)
+
+-- 4. Menu Pilihan (Dropdown)
+MainTab:AddDropdown("Select Weapon", {"Sword", "Bow", "Magic Staff"}, "Sword", function(Selected)
+    print("Weapon selected:", Selected)
+end)
+
+-- 5. Kotak Teks (Input Box)
+MainTab:AddInput("Custom Teleport Player", "Enter username...", function(Text)
+    print("Teleport target:", Text)
+end)
+
+-- 6. Pemilih Warna (Color Picker)
+MainTab:AddColorPicker("ESP Color Overlay", Color3.fromRGB(0, 122, 255), function(Color)
+    print("Selected Color:", Color)
+end)
+
+-- 7. Pengatur Tombol (Keybind)
+MainTab:AddKeybind("Toggle UI Keybind", "T", function(KeyCode)
+    print("UI Keybind pressed:", KeyCode.Name)
 end)
 ```
 
-### 📌 Fitur Utama MalaikatUI
-* **Frosted Glass UI:** Tampilan transparan yang elegan, modern, dan bersih.
-* **Ultra Smooth Physics:** Pergerakan UI dan elemen menggunakan lerp spring animation.
-* **Built-in Key System:** Sistem keamanan verifikasi kunci akses sebelum membuka UI.
-* **Loading Screen:** Intro animasi progresif sebelum masuk ke menu utama.
-* **Lengkap & Kompatibel:** Mendukung Button, Toggle, Slider, Dropdown, Input Box, Color Picker, dan Keybind.
+### 💡 Fleksibilitas Key System
 
-### 👁️ Preview MalaikatUI
+Jika kamu **tidak ingin menggunakan Key System**, kamu cukup mengubah argumen kedua menjadi `false`:
+
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))()
+-- Key System dinonaktifkan (Langsung terbuka)
+local Window = MalaikatLib:CreateWindow("Malaikat HUB", false)
+```
+
+### 📌 Keunggulan Antarmuka
+* **Fluid Animation Physics:** Pergerakan UI dan efek tombol menggunakan lerp spring yang halus.
+* **Responsive Layout:** Penataan elemen rapi dan otomatis menyesuaikan ukuran konten.
+* **Cross-Device Ready:** Nyaman digunakan baik di PC maupun perangkat Mobile.
+
+### 👁️ Preview UI
+```lua
+loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua)"))()
 ```
 
 ---
 
 ## 🇬🇧 English
 
-A modern Roblox UI Library powered by a **Frosted Glass Engine**, featuring ultra-smooth animations, physics-based dragging, a built-in key system, and an intro loading screen.
+**MalaikatUI** is a lightweight, modern Roblox UI Library built for developers who demand high performance and clean aesthetics. Powered by a custom frosted glass engine, it delivers responsive controls, smooth spring physics, and zero interface lag.
 
-### 🚀 Quick Start Guide
-
-Call this library in your Roblox script using the following code:
+### 🚀 Complete Integration Guide
 
 ```lua
--- 1. Import Library
-local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))()
+-- Load the Library
+local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua)"))()
 
--- 2. Create Main Window
+-- Initialize Main Window
+-- Syntax: CreateWindow("Title", UseKeySystem, "CorrectKey")
 local Window = MalaikatLib:CreateWindow("Malaikat HUB", true, "Malaikat2026")
 
--- 3. Create Tabs
-local MainTab = Window:CreateTab("Main")
-local SettingsTab = Window:CreateTab("Settings")
+-- Create Navigation Tabs
+local MainTab = Window:CreateTab("Main Features")
+local PlayerTab = Window:CreateTab("Player Stats")
 
--- 4. Add Components
-MainTab:AddButton("Test Button", "Click", function()
-    print("Button Clicked!")
+-- 1. Action Button
+MainTab:AddButton("Teleport to Spawn", "Teleport", function()
+    print("Teleporting player...")
 end)
 
-MainTab:AddToggle("preview_toggle", "Auto Farm", false, function(Value)
-    print("Toggle State:", Value)
+-- 2. State Toggle
+MainTab:AddToggle("Auto Farm Kills", false, function(Value)
+    print("Auto Farm status:", Value)
 end)
 
-MainTab:AddSlider("Walkspeed", 16, 200, 16, function(Value)
+-- 3. Value Slider
+PlayerTab:AddSlider("WalkSpeed Modifier", 16, 250, 16, function(Value)
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+end)
+
+-- 4. Selection Dropdown
+MainTab:AddDropdown("Select Weapon", {"Sword", "Bow", "Magic Staff"}, "Sword", function(Selected)
+    print("Weapon selected:", Selected)
+end)
+
+-- 5. Text Input Box
+MainTab:AddInput("Custom Teleport Player", "Enter username...", function(Text)
+    print("Teleport target:", Text)
+end)
+
+-- 6. Color Picker
+MainTab:AddColorPicker("ESP Color Overlay", Color3.fromRGB(0, 122, 255), function(Color)
+    print("Selected Color:", Color)
+end)
+
+-- 7. Keybind
+MainTab:AddKeybind("Toggle UI Keybind", "T", function(KeyCode)
+    print("UI Keybind pressed:", KeyCode.Name)
 end)
 ```
 
-### 📌 MalaikatUI Key Features
-* **Frosted Glass UI:** An elegant, clean, and modern transparent design.
-* **Ultra Smooth Physics:** Elements and UI movement driven by fluid lerp spring physics.
-* **Built-in Key System:** Access verification security before entering the main UI.
-* **Loading Screen:** Progressive intro animation before launching the interface.
-* **Full Component Suite:** Supports Buttons, Toggles, Sliders, Dropdowns, Input Boxes, Color Pickers, and Keybinds.
+### 💡 Bypassing Key Verification
 
-### 👁️ Preview MalaikatUI
+If your script **does not require key validation**, set the second argument to `false`:
+
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))()
+-- Directly launches the UI window without key prompt
+local Window = MalaikatLib:CreateWindow("Malaikat HUB", false)
+```
+
+### 📌 Core Features
+* **Fluid Animation Physics:** Built using spring lerping algorithms for silky smooth transitions.
+* **Clean UI Hierarchy:** Automated content layout ensures immaculate component alignment.
+* **Cross-Platform Support:** Fully optimized for mobile execution and desktop controls.
+
+### 👁️ UI Preview Script
+```lua
+loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua)"))()
 ```
 
 ---
 
 ## 🇲🇾 Bahasa Melayu
 
-Library UI Roblox moden berkuasakan **Frosted Glass Engine** yang dilengkapi dengan animasi super lancar, physics-engine dragging, sistem kunci (key system), dan skrin pemuatan (loading screen).
+**MalaikatUI** ialah library UI Roblox moden yang direka khas untuk pembangun skrip yang mengutamakan kelancaran dan reka bentuk elegan. Dijana dengan kesan *Frosted Glass*, antarmuka ini memberikan pergerakan elemen yang ultra-smooth serta ringan tanpa menjejaskan prestasi permainan.
 
-### 🚀 Cara Penggunaan (Pantas)
-
-Panggil library ini dalam skrip Roblox anda dengan menggunakan kod berikut:
+### 🚀 Panduan Penggunaan Lengkap
 
 ```lua
--- 1. Import Library
-local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))()
+-- Muat Turun Library
+local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua)"))()
 
--- 2. Cipta Window Utama
+-- Cipta Tingkap Utama
+-- Format: CreateWindow("Tajuk UI", GunaKeySystem?, "KunciAkses")
 local Window = MalaikatLib:CreateWindow("Malaikat HUB", true, "Malaikat2026")
 
--- 3. Cipta Tab
-local MainTab = Window:CreateTab("Main")
-local SettingsTab = Window:CreateTab("Settings")
+-- Cipta Tab Navigasi
+local MainTab = Window:CreateTab("Main Features")
+local PlayerTab = Window:CreateTab("Player Stats")
 
--- 4. Tambah Komponen
-MainTab:AddButton("Test Button", "Click", function()
-    print("Button Clicked!")
+-- 1. Butang (Button)
+MainTab:AddButton("Teleport to Spawn", "Teleport", function()
+    print("Teleporting player...")
 end)
 
-MainTab:AddToggle("preview_toggle", "Auto Farm", false, function(Value)
-    print("Toggle State:", Value)
+-- 2. Suis (Toggle)
+MainTab:AddToggle("Auto Farm Kills", false, function(Value)
+    print("Auto Farm status:", Value)
 end)
 
-MainTab:AddSlider("Walkspeed", 16, 200, 16, function(Value)
+-- 3. Pengelongsor (Slider)
+PlayerTab:AddSlider("WalkSpeed Modifier", 16, 250, 16, function(Value)
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
+end)
+
+-- 4. Pilihan Menu (Dropdown)
+MainTab:AddDropdown("Select Weapon", {"Sword", "Bow", "Magic Staff"}, "Sword", function(Selected)
+    print("Weapon selected:", Selected)
+end)
+
+-- 5. Kotak Teks (Input Box)
+MainTab:AddInput("Custom Teleport Player", "Enter username...", function(Text)
+    print("Teleport target:", Text)
+end)
+
+-- 6. Pemilih Warna (Color Picker)
+MainTab:AddColorPicker("ESP Color Overlay", Color3.fromRGB(0, 122, 255), function(Color)
+    print("Selected Color:", Color)
+end)
+
+-- 7. Tetapan Kunci (Keybind)
+MainTab:AddKeybind("Toggle UI Keybind", "T", function(KeyCode)
+    print("UI Keybind pressed:", KeyCode.Name)
 end)
 ```
 
-### 📌 Ciri-Ciri Utama MalaikatUI
-* **Frosted Glass UI:** Paparan lut sinar yang elegan, moden, dan kemas.
-* **Ultra Smooth Physics:** Pergerakan UI dan elemen menggunakan animasi lerp spring.
-* **Built-in Key System:** Sistem keselamatan pengesahan kunci akses sebelum membuka UI.
-* **Skrin Pemuatan (Loading Screen):** Intro animasi progresif sebelum masuk ke paparan utama.
-* **Lengkap & Kompatibel:** Menyokong Button, Toggle, Slider, Dropdown, Input Box, Color Picker, dan Keybind.
+### 💡 Matikan Sistem Kunci (Key System)
 
-### 👁️ Pratonton (Preview) MalaikatUI
+Sekiranya anda **tidak memerlukan pengesahan kunci**, tukarkan nilai kedua kepada `false`:
+
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))()
+-- Buka UI secara terus tanpa prompt kunci
+local Window = MalaikatLib:CreateWindow("Malaikat HUB", false)
+```
+
+### 📌 Ciri-Ciri Utama
+* **Animasi Ultra Lancar:** Pergerakan tetingkap dan butang dikawal oleh formula spring physics yang sangat responsif.
+* **Susun Atur Automatik:** Komponen disusun secara automatik mengikut Saiz kandungan dengan kemas.
+* **Mesra Peranti:** Berfungsi dengan stabil pada peranti Mudah Alih (Mobile) dan PC.
+
+### 👁️ Skrip Pratonton (Preview)
+```lua
+loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua)"))()
 ```
