@@ -12,7 +12,7 @@
 
 ```lua
 -- 1. Import Library
-local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua)"))()
+local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))()
 
 -- 2. Buat Window Utama (Konfigurasi Tabel)
 local Window = MalaikatLib:CreateWindow({
@@ -47,7 +47,7 @@ Sistem keamanan dapat disesuaikan sepenuhnya saat menginisialisasi jendela UI:
 
 ### 👁️ Preview UI
 ```lua
-loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua)"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))()
 ```
 
 ---
@@ -60,7 +60,7 @@ loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/
 
 ```lua
 -- 1. Import Library
-local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua)"))()
+local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))()
 
 -- 2. Initialize Window (Table Configuration)
 local Window = MalaikatLib:CreateWindow({
@@ -94,7 +94,7 @@ end)
 
 ### 👁️ Preview Script
 ```lua
-loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua)"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))()
 ```
 
 ---
@@ -107,7 +107,7 @@ loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/
 
 ```lua
 -- 1. Muat Turun Library
-local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua)"))()
+local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))()
 
 -- 2. Cipta Window Utama (Tetapan Jadual)
 local Window = MalaikatLib:CreateWindow({
@@ -141,5 +141,5 @@ end)
 
 ### 👁️ Pratonton (Preview)
 ```lua
-loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua)"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))()
 ```
