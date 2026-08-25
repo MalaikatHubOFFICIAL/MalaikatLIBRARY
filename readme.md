@@ -4,7 +4,7 @@
 
 ---
 
-## 🇮🇩 BAHASA INDONESIA
+## 🇮🇩 Bahasa Indonesia
 
 Library UI Roblox modern dengan tampilan **Frosted Glass Engine** yang dilengkapi animasi super smooth, physics-engine dragging, key system, dan loading screen.
 
