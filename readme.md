@@ -22,13 +22,13 @@
 Untuk memulai, panggil skrip library menggunakan kode berikut:
 
 ```lua
-local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua)"))()
+local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua"))()
 
 local Window = MalaikatLib:CreateWindow({
     Title = "Malaikat HUB v2.0",
     KeySystem = true,
     Key = "Malaikat2026",
-    KeyLink = "[https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY](https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY)"
+    KeyLink = "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
 })
 ```
 
@@ -75,7 +75,7 @@ end)
 Uji coba seluruh tampilan dan komponen antarmuka menggunakan skrip preview ini:
 
 ```lua
-loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua)"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua"))()
 ```
 
 ---
@@ -98,13 +98,13 @@ loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/
 To initialize the library, include the following code in your script:
 
 ```lua
-local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua)"))()
+local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua"))()
 
 local Window = MalaikatLib:CreateWindow({
     Title = "Malaikat HUB v2.0",
     KeySystem = true,
     Key = "Malaikat2026",
-    KeyLink = "[https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY](https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY)"
+    KeyLink = "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
 })
 ```
 
@@ -151,7 +151,7 @@ end)
 Test the complete UI layout and interactive elements using the preview script below:
 
 ```lua
-loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua)"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua"))()
 ```
 
 ---
@@ -174,13 +174,13 @@ loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/
 Panggil library ini dalam skrip anda dengan menggunakan kod berikut:
 
 ```lua
-local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua)"))()
+local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua"))()
 
 local Window = MalaikatLib:CreateWindow({
     Title = "Malaikat HUB v2.0",
     KeySystem = true,
     Key = "Malaikat2026",
-    KeyLink = "[https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY](https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY)"
+    KeyLink = "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
 })
 ```
 
@@ -227,5 +227,5 @@ end)
 Uji paparan antaramuka lengkap menggunakan skrip ini:
 
 ```lua
-loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua)"))()
+loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua"))()
 ```
