@@ -1,13 +1,13 @@
 --==============================================================================
---          MALAIKAT UI - LIBRARY ENGINE (iOS 26 ULTRA GLASS COMPLETE)
+--        MALAIKAT UI - iOS 26 ULTRA INTERACTIVE GLASS EDITION (LIBRARY)
 --==============================================================================
 
 local MalaikatLib = {}
 
 function MalaikatLib:CreateWindow(Settings)
 	Settings = Settings or {}
-	local Title = Settings.Title or "MALAIKAT UI"
-	local KeySystem = Settings.KeySystem or false
+	local WindowTitle = Settings.Title or "MALAIKAT UI"
+	local UseKeySystem = Settings.KeySystem or false
 	local CorrectKey = Settings.Key or "malaikatui"
 	local KeyLink = Settings.KeyLink or "dsc.gg/mahub"
 
@@ -36,7 +36,7 @@ function MalaikatLib:CreateWindow(Settings)
 	ScreenGui.DisplayOrder = 9999
 	ScreenGui.Parent = LocalPlayer:WaitForChild("PlayerGui")
 
-	-- Color Palettes Engine
+	-- Color Palettes Engine (iOS 26 Liquid Frosted Glass)
 	local Themes = {
 		Dark = {
 			MainBg = Color3.fromRGB(12, 13, 18),
@@ -48,75 +48,42 @@ function MalaikatLib:CreateWindow(Settings)
 			TextSecondary = Color3.fromRGB(140, 145, 165),
 			Stroke = Color3.fromRGB(255, 255, 255),
 			StrokeTransparency = 0.88,
-			InputBg = Color3.fromRGB(16, 17, 24)
+			InputBg = Color3.fromRGB(16, 17, 24),
+			Accent = Color3.fromRGB(0, 122, 255),
+			Success = Color3.fromRGB(52, 199, 89),
+			Danger = Color3.fromRGB(255, 59, 48),
+			Glow = Color3.fromRGB(0, 122, 255)
+		},
+		Light = {
+			MainBg = Color3.fromRGB(245, 245, 250),
+			MainBgTransparency = 0.1,
+			SideBg = Color3.fromRGB(230, 230, 240),
+			CardBg = Color3.fromRGB(255, 255, 255),
+			SelectorBg = Color3.fromRGB(0, 122, 255),
+			TextPrimary = Color3.fromRGB(10, 10, 15),
+			TextSecondary = Color3.fromRGB(100, 105, 120),
+			Stroke = Color3.fromRGB(0, 0, 0),
+			StrokeTransparency = 0.9,
+			InputBg = Color3.fromRGB(235, 235, 245),
+			Accent = Color3.fromRGB(0, 122, 255),
+			Success = Color3.fromRGB(52, 199, 89),
+			Danger = Color3.fromRGB(255, 59, 48),
+			Glow = Color3.fromRGB(0, 122, 255)
 		}
 	}
 
+	local currentThemeName = "Dark"
 	local currentTheme = Themes.Dark
+	local ThemeElements = {Cards = {}, Strokes = {}, TextPrimary = {}, TextSecondary = {}, InputBoxes = {}}
 
-	-- Animation Math Helpers
+	-- Physics & Animation Math Engine
 	local FastTweenInfo = TweenInfo.new(0.18, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
 	local SpringTweenInfo = TweenInfo.new(0.42, Enum.EasingStyle.Back, Enum.EasingDirection.Out)
 	local UltraSmoothTweenInfo = TweenInfo.new(0.35, Enum.EasingStyle.Exponential, Enum.EasingDirection.Out)
 
-	local function FastTween(inst, props)
-		local t = TweenService:Create(inst, FastTweenInfo, props)
-		t:Play()
-		return t
-	end
-
-	local function SmoothTween(inst, props)
-		local t = TweenService:Create(inst, UltraSmoothTweenInfo, props)
-		t:Play()
-		return t
-	end
-
-	local function SpringTween(inst, props)
-		local t = TweenService:Create(inst, SpringTweenInfo, props)
-		t:Play()
-		return t
-	end
-
-	local function CreateRipple(parentFrame, x, y)
-		task.spawn(function()
-			local ripple = Instance.new("Frame")
-			ripple.Name = "RippleEffect"
-			ripple.AnchorPoint = Vector2.new(0.5, 0.5)
-			ripple.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-			ripple.BackgroundTransparency = 0.6
-			ripple.BorderSizePixel = 0
-			ripple.ZIndex = 20
-
-			local corner = Instance.new("UICorner")
-			corner.CornerRadius = UDim.new(1, 0)
-			corner.Parent = ripple
-
-			local absolutePosition = parentFrame.AbsolutePosition
-			ripple.Position = UDim2.new(0, x - absolutePosition.X, 0, y - absolutePosition.Y)
-			ripple.Size = UDim2.new(0, 0, 0, 0)
-			ripple.Parent = parentFrame
-
-			local targetSize = math.max(parentFrame.AbsoluteSize.X, parentFrame.AbsoluteSize.Y) * 2
-			local tween = TweenService:Create(ripple, TweenInfo.new(0.5, Enum.EasingStyle.Quart, Enum.EasingDirection.Out), {
-				Size = UDim2.new(0, targetSize, 0, targetSize),
-				BackgroundTransparency = 1
-			})
-			tween:Play()
-			tween.Completed:Wait()
-			ripple:Destroy()
-		end)
-	end
-
-	local function AttachCardInteractivity(frame, stroke)
-		frame.MouseEnter:Connect(function()
-			FastTween(frame, {BackgroundTransparency = 0.25})
-			FastTween(stroke, {Color = Color3.fromRGB(0, 122, 255), Transparency = 0.4})
-		end)
-		frame.MouseLeave:Connect(function()
-			FastTween(frame, {BackgroundTransparency = 0.45})
-			FastTween(stroke, {Color = currentTheme.Stroke, Transparency = currentTheme.StrokeTransparency})
-		end)
-	end
+	local function FastTween(inst, props) return TweenService:Create(inst, FastTweenInfo, props):Play() end
+	local function SmoothTween(inst, props) return TweenService:Create(inst, UltraSmoothTweenInfo, props):Play() end
+	local function SpringTween(inst, props) return TweenService:Create(inst, SpringTweenInfo, props):Play() end
 
 	-- Dynamic Island Notification Queue System
 	local NotifHolder = Instance.new("Frame")
@@ -134,48 +101,40 @@ function MalaikatLib:CreateWindow(Settings)
 	NotifLayout.SortOrder = Enum.SortOrder.LayoutOrder
 	NotifLayout.Parent = NotifHolder
 
-	local function Notify(notifTitle, message, duration)
+	local function Notify(title, message, duration)
 		duration = duration or 3.5
 		local Card = Instance.new("Frame")
-		Card.Name = "NotifCard"
 		Card.Size = UDim2.new(0, 0, 0, 58)
 		Card.BackgroundColor3 = currentTheme.SideBg
 		Card.BackgroundTransparency = 0.15
 		Card.ClipsDescendants = true
 		Card.Parent = NotifHolder
 
-		local CardCorner = Instance.new("UICorner")
+		local CardCorner = Instance.new("UICorner", Card)
 		CardCorner.CornerRadius = UDim.new(0, 18)
-		CardCorner.Parent = Card
 
-		local CardStroke = Instance.new("UIStroke")
+		local CardStroke = Instance.new("UIStroke", Card)
 		CardStroke.Color = currentTheme.Stroke
 		CardStroke.Thickness = 1.2
 		CardStroke.Transparency = 0.85
-		CardStroke.Parent = Card
 
-		local GlowBar = Instance.new("Frame")
+		local GlowBar = Instance.new("Frame", Card)
 		GlowBar.Size = UDim2.new(0, 4, 0, 26)
 		GlowBar.Position = UDim2.new(0, 12, 0.5, -13)
 		GlowBar.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-		GlowBar.Parent = Card
+		Instance.new("UICorner", GlowBar).CornerRadius = UDim.new(1, 0)
 
-		local GlowCorner = Instance.new("UICorner")
-		GlowCorner.CornerRadius = UDim.new(1, 0)
-		GlowCorner.Parent = GlowBar
-
-		local TitleLbl = Instance.new("TextLabel")
+		local TitleLbl = Instance.new("TextLabel", Card)
 		TitleLbl.Size = UDim2.new(1, -30, 0, 18)
 		TitleLbl.Position = UDim2.new(0, 26, 0, 10)
 		TitleLbl.BackgroundTransparency = 1
-		TitleLbl.Text = notifTitle
+		TitleLbl.Text = title
 		TitleLbl.TextColor3 = currentTheme.TextPrimary
 		TitleLbl.TextSize = 13
 		TitleLbl.Font = Enum.Font.GothamBold
 		TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
-		TitleLbl.Parent = Card
 
-		local MsgLbl = Instance.new("TextLabel")
+		local MsgLbl = Instance.new("TextLabel", Card)
 		MsgLbl.Size = UDim2.new(1, -30, 0, 18)
 		MsgLbl.Position = UDim2.new(0, 26, 0, 28)
 		MsgLbl.BackgroundTransparency = 1
@@ -184,11 +143,12 @@ function MalaikatLib:CreateWindow(Settings)
 		MsgLbl.TextSize = 11
 		MsgLbl.Font = Enum.Font.Gotham
 		MsgLbl.TextXAlignment = Enum.TextXAlignment.Left
-		MsgLbl.Parent = Card
 
-		SpringTween(Card, {Size = UDim2.new(1, 0, 0, 58)})
+		TweenService:Create(Card, SpringTweenInfo, {Size = UDim2.new(1, 0, 0, 58)}):Play()
+
 		task.delay(duration, function()
-			local dismiss = SmoothTween(Card, {Size = UDim2.new(0, 0, 0, 58), BackgroundTransparency = 1})
+			local dismiss = TweenService:Create(Card, UltraSmoothTweenInfo, {Size = UDim2.new(0, 0, 0, 58), BackgroundTransparency = 1})
+			dismiss:Play()
 			dismiss.Completed:Connect(function() Card:Destroy() end)
 		end)
 	end
@@ -197,63 +157,48 @@ function MalaikatLib:CreateWindow(Settings)
 	local function makeDraggable(frame)
 		local dragging = false
 		local dragInput, dragStart, startPos
-
 		frame.InputBegan:Connect(function(input)
 			if isSliderDragging then return end
 			if input.UserInputType == Enum.UserInputType.MouseButton1 or input.UserInputType == Enum.UserInputType.Touch then
 				dragging = true
 				dragStart = input.Position
 				startPos = frame.Position
-
 				input.Changed:Connect(function()
-					if input.UserInputState == Enum.UserInputState.End then
-						dragging = false
-					end
+					if input.UserInputState == Enum.UserInputState.End then dragging = false end
 				end)
 			end
 		end)
-
 		frame.InputChanged:Connect(function(input)
 			if input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch then
 				dragInput = input
 			end
 		end)
-
 		UserInputService.InputChanged:Connect(function(input)
 			if input == dragInput and dragging and not isSliderDragging then
 				local delta = input.Position - dragStart
-				local targetPos = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)
-				SmoothTween(frame, {Position = targetPos})
+				SmoothTween(frame, {Position = UDim2.new(startPos.X.Scale, startPos.X.Offset + delta.X, startPos.Y.Scale, startPos.Y.Offset + delta.Y)})
 			end
 		end)
 	end
 
 	local loadMainUI
 
-	-- Key System Dialog UI
+	-- Key System Implementation
 	local KeyFrame = Instance.new("Frame")
-	KeyFrame.Name = "KeySystemFrame"
 	KeyFrame.Size = UDim2.new(0, 360, 0, 260)
 	KeyFrame.Position = UDim2.new(0.5, -180, 0.5, -130)
 	KeyFrame.BackgroundColor3 = currentTheme.MainBg
 	KeyFrame.BackgroundTransparency = currentTheme.MainBgTransparency
-	KeyFrame.Visible = KeySystem
-	KeyFrame.ZIndex = 400
+	KeyFrame.Visible = UseKeySystem
 	KeyFrame.Parent = ScreenGui
 
-	local KeyCorner = Instance.new("UICorner")
-	KeyCorner.CornerRadius = UDim.new(0, 20)
-	KeyCorner.Parent = KeyFrame
-
-	local KeyStroke = Instance.new("UIStroke")
+	Instance.new("UICorner", KeyFrame).CornerRadius = UDim.new(0, 20)
+	local KeyStroke = Instance.new("UIStroke", KeyFrame)
 	KeyStroke.Color = currentTheme.Stroke
-	KeyStroke.Thickness = 1.2
 	KeyStroke.Transparency = currentTheme.StrokeTransparency
-	KeyStroke.Parent = KeyFrame
-
 	makeDraggable(KeyFrame)
 
-	local KeyTitle = Instance.new("TextLabel")
+	local KeyTitle = Instance.new("TextLabel", KeyFrame)
 	KeyTitle.Size = UDim2.new(1, 0, 0, 30)
 	KeyTitle.Position = UDim2.new(0, 0, 0, 16)
 	KeyTitle.BackgroundTransparency = 1
@@ -261,189 +206,262 @@ function MalaikatLib:CreateWindow(Settings)
 	KeyTitle.TextColor3 = currentTheme.TextPrimary
 	KeyTitle.TextSize = 16
 	KeyTitle.Font = Enum.Font.GothamBold
-	KeyTitle.Parent = KeyFrame
 
-	local KeyInputBox = Instance.new("TextBox")
-	KeyInputBox.Size = UDim2.new(1, -40, 0, 42)
-	KeyInputBox.Position = UDim2.new(0, 20, 0, 80)
-	KeyInputBox.BackgroundColor3 = currentTheme.InputBg
-	KeyInputBox.PlaceholderText = "Masukkan Key..."
-	KeyInputBox.PlaceholderColor3 = Color3.fromRGB(120, 120, 130)
-	KeyInputBox.Text = ""
-	KeyInputBox.TextColor3 = currentTheme.TextPrimary
-	KeyInputBox.Font = Enum.Font.Gotham
-	KeyInputBox.TextSize = 13
-	KeyInputBox.Parent = KeyFrame
+	local KeyInput = Instance.new("TextBox", KeyFrame)
+	KeyInput.Size = UDim2.new(1, -40, 0, 42)
+	KeyInput.Position = UDim2.new(0, 20, 0, 80)
+	KeyInput.BackgroundColor3 = currentTheme.InputBg
+	KeyInput.PlaceholderText = "Masukkan Key..."
+	KeyInput.Text = ""
+	KeyInput.TextColor3 = currentTheme.TextPrimary
+	KeyInput.Font = Enum.Font.Gotham
+	KeyInput.TextSize = 13
+	Instance.new("UICorner", KeyInput).CornerRadius = UDim.new(0, 12)
 
-	local KeyInputCorner = Instance.new("UICorner")
-	KeyInputCorner.CornerRadius = UDim.new(0, 12)
-	KeyInputCorner.Parent = KeyInputBox
+	local SubmitBtn = Instance.new("TextButton", KeyFrame)
+	SubmitBtn.Size = UDim2.new(0.44, 0, 0, 40)
+	SubmitBtn.Position = UDim2.new(0, 20, 0, 138)
+	SubmitBtn.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
+	SubmitBtn.Text = "Submit Key"
+	SubmitBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+	SubmitBtn.Font = Enum.Font.GothamBold
+	SubmitBtn.TextSize = 12
+	Instance.new("UICorner", SubmitBtn).CornerRadius = UDim.new(0, 12)
 
-	local SubmitKeyBtn = Instance.new("TextButton")
-	SubmitKeyBtn.Size = UDim2.new(0.44, 0, 0, 40)
-	SubmitKeyBtn.Position = UDim2.new(0, 20, 0, 138)
-	SubmitKeyBtn.BackgroundColor3 = Color3.fromRGB(0, 122, 255)
-	SubmitKeyBtn.Text = "Submit Key"
-	SubmitKeyBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
-	SubmitKeyBtn.Font = Enum.Font.GothamBold
-	SubmitKeyBtn.TextSize = 12
-	SubmitKeyBtn.Parent = KeyFrame
+	local GetLinkBtn = Instance.new("TextButton", KeyFrame)
+	GetLinkBtn.Size = UDim2.new(0.44, 0, 0, 40)
+	GetLinkBtn.Position = UDim2.new(0.56, -20, 0, 138)
+	GetLinkBtn.BackgroundColor3 = currentTheme.CardBg
+	GetLinkBtn.Text = "Get Link"
+	GetLinkBtn.TextColor3 = currentTheme.TextPrimary
+	GetLinkBtn.Font = Enum.Font.GothamBold
+	GetLinkBtn.TextSize = 12
+	Instance.new("UICorner", GetLinkBtn).CornerRadius = UDim.new(0, 12)
 
-	local SubmitCorner = Instance.new("UICorner")
-	SubmitCorner.CornerRadius = UDim.new(0, 12)
-	SubmitCorner.Parent = SubmitKeyBtn
-
-	local GetKeyBtn = Instance.new("TextButton")
-	GetKeyBtn.Size = UDim2.new(0.44, 0, 0, 40)
-	GetKeyBtn.Position = UDim2.new(0.56, -20, 0, 138)
-	GetKeyBtn.BackgroundColor3 = currentTheme.CardBg
-	GetKeyBtn.Text = "Get Link"
-	GetKeyBtn.TextColor3 = currentTheme.TextPrimary
-	GetKeyBtn.Font = Enum.Font.GothamBold
-	GetKeyBtn.TextSize = 12
-	GetKeyBtn.Parent = KeyFrame
-
-	local GetCorner = Instance.new("UICorner")
-	GetCorner.CornerRadius = UDim.new(0, 12)
-	GetCorner.Parent = GetKeyBtn
-
-	-- Main Window API Handler
+	-- Window API Wrapper
 	local WindowAPI = {}
 
 	loadMainUI = function()
-		local MainFrame = Instance.new("Frame")
+		local MainFrame = Instance.new("Frame", ScreenGui)
 		MainFrame.Name = "MainFrame"
 		MainFrame.Size = UDim2.new(0, 600, 0, 410)
 		MainFrame.Position = UDim2.new(0.5, -300, 0.5, -205)
 		MainFrame.BackgroundColor3 = currentTheme.MainBg
 		MainFrame.BackgroundTransparency = currentTheme.MainBgTransparency
-		MainFrame.BorderSizePixel = 0
-		MainFrame.Parent = ScreenGui
+		MainFrame.ClipsDescendants = false
+		Instance.new("UICorner", MainFrame).CornerRadius = UDim.new(0, 22)
 
-		local MainCorner = Instance.new("UICorner")
-		MainCorner.CornerRadius = UDim.new(0, 22)
-		MainCorner.Parent = MainFrame
-
-		local MainStroke = Instance.new("UIStroke")
+		local MainStroke = Instance.new("UIStroke", MainFrame)
 		MainStroke.Color = currentTheme.Stroke
-		MainStroke.Thickness = 1.2
 		MainStroke.Transparency = currentTheme.StrokeTransparency
-		MainStroke.Parent = MainFrame
 
-		makeDraggable(MainFrame)
+		-- Ambient Glass Orbs
+		local AmbientContainer = Instance.new("Frame", MainFrame)
+		AmbientContainer.Size = UDim2.new(1, 0, 1, 0)
+		AmbientContainer.BackgroundTransparency = 1
+		AmbientContainer.ClipsDescendants = true
+		AmbientContainer.ZIndex = 0
 
-		-- Header Controls
-		local TitleLbl = Instance.new("TextLabel")
-		TitleLbl.Size = UDim2.new(0, 350, 0, 30)
-		TitleLbl.Position = UDim2.new(0, 16, 0, 10)
-		TitleLbl.BackgroundTransparency = 1
-		TitleLbl.Text = Title
-		TitleLbl.TextColor3 = currentTheme.TextPrimary
-		TitleLbl.TextSize = 16
-		TitleLbl.Font = Enum.Font.GothamBold
-		TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
-		TitleLbl.Parent = MainFrame
+		local Orb1 = Instance.new("ImageLabel", AmbientContainer)
+		Orb1.Size = UDim2.new(0, 320, 0, 320)
+		Orb1.Position = UDim2.new(-0.2, 0, -0.2, 0)
+		Orb1.BackgroundTransparency = 1
+		Orb1.Image = "rbxassetid://5810228302"
+		Orb1.ImageColor3 = Color3.fromRGB(0, 122, 255)
+		Orb1.ImageTransparency = 0.55
+		Orb1.ZIndex = 0
 
-		local CloseBtn = Instance.new("TextButton")
-		CloseBtn.Size = UDim2.new(0, 14, 0, 14)
-		CloseBtn.Position = UDim2.new(1, -30, 0, 16)
-		CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 69, 58)
-		CloseBtn.Text = ""
-		CloseBtn.Parent = MainFrame
+		local Orb2 = Instance.new("ImageLabel", AmbientContainer)
+		Orb2.Size = UDim2.new(0, 340, 0, 340)
+		Orb2.Position = UDim2.new(0.6, 0, 0.5, 0)
+		Orb2.BackgroundTransparency = 1
+		Orb2.Image = "rbxassetid://5810228302"
+		Orb2.ImageColor3 = Color3.fromRGB(160, 0, 255)
+		Orb2.ImageTransparency = 0.6
+		Orb2.ZIndex = 0
 
-		local CloseCorner = Instance.new("UICorner")
-		CloseCorner.CornerRadius = UDim.new(1, 0)
-		CloseCorner.Parent = CloseBtn
-
-		local isOpen = true
-		CloseBtn.MouseButton1Click:Connect(function()
-			isOpen = not isOpen
-			MainFrame.Visible = isOpen
+		RunService.RenderStepped:Connect(function()
+			local t = tick()
+			Orb1.Position = UDim2.new(-0.2 + math.sin(t * 0.7) * 0.06, 0, -0.2 + math.cos(t * 0.5) * 0.06, 0)
+			Orb2.Position = UDim2.new(0.6 + math.cos(t * 0.6) * 0.07, 0, 0.5 + math.sin(t * 0.8) * 0.06, 0)
 		end)
 
-		-- Sidebar & Content Area
-		local Sidebar = Instance.new("Frame")
+		-- Header Controls
+		local TitleContainer = Instance.new("Frame", MainFrame)
+		TitleContainer.Size = UDim2.new(0, 350, 0, 30)
+		TitleContainer.Position = UDim2.new(0, 16, 0, 10)
+		TitleContainer.BackgroundTransparency = 1
+		TitleContainer.ZIndex = 2
+
+		local TitleLayout = Instance.new("UIListLayout", TitleContainer)
+		TitleLayout.FillDirection = Enum.FillDirection.Horizontal
+		TitleLayout.SortOrder = Enum.SortOrder.LayoutOrder
+		TitleLayout.Padding = UDim.new(0, 6)
+		TitleLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+
+		local TitleMalaikat = Instance.new("TextLabel", TitleContainer)
+		TitleMalaikat.Size = UDim2.new(0, 0, 1, 0)
+		TitleMalaikat.AutomaticSize = Enum.AutomaticSize.X
+		TitleMalaikat.BackgroundTransparency = 1
+		TitleMalaikat.Text = WindowTitle
+		TitleMalaikat.TextColor3 = currentTheme.TextPrimary
+		TitleMalaikat.TextSize = 16
+		TitleMalaikat.Font = Enum.Font.GothamBold
+
+		local WindowControls = Instance.new("Frame", MainFrame)
+		WindowControls.Size = UDim2.new(0, 68, 0, 26)
+		WindowControls.Position = UDim2.new(1, -80, 0, 10)
+		WindowControls.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
+		WindowControls.BackgroundTransparency = 0.4
+		WindowControls.ZIndex = 2
+		Instance.new("UICorner", WindowControls).CornerRadius = UDim.new(1, 0)
+
+		local ControlLayout = Instance.new("UIListLayout", WindowControls)
+		ControlLayout.FillDirection = Enum.FillDirection.Horizontal
+		ControlLayout.HorizontalAlignment = Enum.HorizontalAlignment.Center
+		ControlLayout.VerticalAlignment = Enum.VerticalAlignment.Center
+		ControlLayout.Padding = UDim.new(0, 8)
+
+		local MinimizeBtn = Instance.new("TextButton", WindowControls)
+		MinimizeBtn.Size = UDim2.new(0, 14, 0, 14)
+		MinimizeBtn.BackgroundColor3 = Color3.fromRGB(255, 179, 0)
+		MinimizeBtn.Text = ""
+		Instance.new("UICorner", MinimizeBtn).CornerRadius = UDim.new(1, 0)
+
+		local CloseBtn = Instance.new("TextButton", WindowControls)
+		CloseBtn.Size = UDim2.new(0, 14, 0, 14)
+		CloseBtn.BackgroundColor3 = Color3.fromRGB(255, 69, 58)
+		CloseBtn.Text = ""
+		Instance.new("UICorner", CloseBtn).CornerRadius = UDim.new(1, 0)
+
+		local FloatingBtn = Instance.new("TextButton", ScreenGui)
+		FloatingBtn.Name = "FloatingMobileBtn"
+		FloatingBtn.Size = UDim2.new(0, 52, 0, 52)
+		FloatingBtn.Position = UDim2.new(0.02, 0, 0.2, 0)
+		FloatingBtn.BackgroundColor3 = currentTheme.SideBg
+		FloatingBtn.Text = "iOS"
+		FloatingBtn.TextColor3 = currentTheme.TextPrimary
+		FloatingBtn.Font = Enum.Font.GothamBold
+		FloatingBtn.TextSize = 13
+		FloatingBtn.Visible = UserInputService.TouchEnabled
+		Instance.new("UICorner", FloatingBtn).CornerRadius = UDim.new(0, 18)
+
+		makeDraggable(MainFrame)
+		makeDraggable(FloatingBtn)
+
+		-- Sidebar Navigation System
+		local Sidebar = Instance.new("Frame", MainFrame)
 		Sidebar.Size = UDim2.new(0, 140, 1, -58)
 		Sidebar.Position = UDim2.new(0, 12, 0, 44)
 		Sidebar.BackgroundColor3 = currentTheme.SideBg
 		Sidebar.BackgroundTransparency = 0.4
-		Sidebar.Parent = MainFrame
-
+		Sidebar.ZIndex = 2
 		Instance.new("UICorner", Sidebar).CornerRadius = UDim.new(0, 16)
 
-		local ButtonsContainer = Instance.new("Frame")
+		local TabSelector = Instance.new("Frame", Sidebar)
+		TabSelector.Size = UDim2.new(1, -12, 0, 34)
+		TabSelector.Position = UDim2.new(0, 6, 0, 6)
+		TabSelector.BackgroundColor3 = currentTheme.SelectorBg
+		TabSelector.ZIndex = 1
+		Instance.new("UICorner", TabSelector).CornerRadius = UDim.new(0, 10)
+
+		local ButtonsContainer = Instance.new("Frame", Sidebar)
 		ButtonsContainer.Size = UDim2.new(1, 0, 1, 0)
 		ButtonsContainer.BackgroundTransparency = 1
-		ButtonsContainer.Parent = Sidebar
+		ButtonsContainer.ZIndex = 2
 
-		local SideList = Instance.new("UIListLayout")
+		local SideList = Instance.new("UIListLayout", ButtonsContainer)
 		SideList.Padding = UDim.new(0, 4)
 		SideList.HorizontalAlignment = Enum.HorizontalAlignment.Center
-		SideList.Parent = ButtonsContainer
+		SideList.SortOrder = Enum.SortOrder.LayoutOrder
 
-		local ContentArea = Instance.new("Frame")
+		local ContentArea = Instance.new("Frame", MainFrame)
 		ContentArea.Size = UDim2.new(1, -172, 1, -58)
 		ContentArea.Position = UDim2.new(0, 160, 0, 44)
 		ContentArea.BackgroundTransparency = 1
 		ContentArea.ClipsDescendants = true
-		ContentArea.Parent = MainFrame
+		ContentArea.ZIndex = 2
 
 		local Tabs = {}
 		local TabButtons = {}
 		local currentTabName = ""
 		local tabIndexCounter = 0
 
+		local function updateTabSelector(tabName)
+			local btn = TabButtons[tabName]
+			if not btn then return end
+			task.spawn(function()
+				task.wait()
+				local targetY = btn.AbsolutePosition.Y - Sidebar.AbsolutePosition.Y
+				SpringTween(TabSelector, {Position = UDim2.new(0, 6, 0, targetY), Size = UDim2.new(1, -12, 0, btn.AbsoluteSize.Y)})
+			end)
+		end
+
 		function WindowAPI:CreateTab(tabName)
 			tabIndexCounter = tabIndexCounter + 1
 			local isFirst = (tabIndexCounter == 1)
 
-			local TabBtn = Instance.new("TextButton")
+			local TabBtn = Instance.new("TextButton", ButtonsContainer)
 			TabBtn.Size = UDim2.new(1, -12, 0, 34)
 			TabBtn.BackgroundTransparency = 1
 			TabBtn.Text = tabName
 			TabBtn.TextColor3 = isFirst and Color3.fromRGB(255, 255, 255) or currentTheme.TextSecondary
 			TabBtn.Font = Enum.Font.GothamMedium
 			TabBtn.TextSize = 13
-			TabBtn.Parent = ButtonsContainer
+			TabBtn.LayoutOrder = tabIndexCounter
+			TabBtn.ZIndex = 3
 
-			local TabGroup = Instance.new("Frame")
+			local TabGroup = Instance.new("CanvasGroup", ContentArea)
 			TabGroup.Size = UDim2.new(1, 0, 1, 0)
 			TabGroup.BackgroundTransparency = 1
+			TabGroup.GroupTransparency = isFirst and 0 or 1
 			TabGroup.Visible = isFirst
-			TabGroup.Parent = ContentArea
 
-			local Scroll = Instance.new("ScrollingFrame")
+			local Scroll = Instance.new("ScrollingFrame", TabGroup)
 			Scroll.Size = UDim2.new(1, 0, 1, 0)
 			Scroll.BackgroundTransparency = 1
 			Scroll.ScrollBarThickness = 3
-			Scroll.Parent = TabGroup
+			Scroll.ScrollBarImageColor3 = Color3.fromRGB(150, 150, 170)
 
-			local ScrollLayout = Instance.new("UIListLayout")
+			local ScrollLayout = Instance.new("UIListLayout", Scroll)
 			ScrollLayout.Padding = UDim.new(0, 8)
-			ScrollLayout.Parent = Scroll
+			ScrollLayout.SortOrder = Enum.SortOrder.LayoutOrder
 
 			ScrollLayout:GetPropertyChangedSignal("AbsoluteContentSize"):Connect(function()
 				Scroll.CanvasSize = UDim2.new(0, 0, 0, ScrollLayout.AbsoluteContentSize.Y + 15)
 			end)
 
-			Tabs[tabName] = TabGroup
+			Tabs[tabName] = {Group = TabGroup, Index = tabIndexCounter}
 			TabButtons[tabName] = TabBtn
 
 			if isFirst then
 				currentTabName = tabName
+				task.delay(0.1, function() updateTabSelector(tabName) end)
 			end
 
 			TabBtn.MouseButton1Click:Connect(function()
 				if currentTabName == tabName then return end
-				Tabs[currentTabName].Visible = false
+				updateTabSelector(tabName)
+
+				for name, btn in pairs(TabButtons) do
+					FastTween(btn, {TextColor3 = currentTheme.TextSecondary})
+				end
+				FastTween(TabBtn, {TextColor3 = Color3.fromRGB(255, 255, 255)})
+
+				local oldGroup = Tabs[currentTabName].Group
+				FastTween(oldGroup, {GroupTransparency = 1})
+				oldGroup.Visible = false
+
 				currentTabName = tabName
+				TabGroup.GroupTransparency = 1
 				TabGroup.Visible = true
+				SmoothTween(TabGroup, {GroupTransparency = 0})
 			end)
 
 			local TabAPI = {}
 
 			function TabAPI:AddSectionHeader(text)
-				local Label = Instance.new("TextLabel")
+				local Label = Instance.new("TextLabel", Scroll)
 				Label.Size = UDim2.new(1, -5, 0, 20)
 				Label.BackgroundTransparency = 1
 				Label.Text = string.upper(text)
@@ -451,62 +469,63 @@ function MalaikatLib:CreateWindow(Settings)
 				Label.TextSize = 11
 				Label.Font = Enum.Font.GothamBold
 				Label.TextXAlignment = Enum.TextXAlignment.Left
-				Label.Parent = Scroll
 			end
 
 			function TabAPI:AddButton(text, rightLabel, callback)
-				local Frame = Instance.new("Frame")
+				local Frame = Instance.new("Frame", Scroll)
 				Frame.Size = UDim2.new(1, -8, 0, 42)
 				Frame.BackgroundColor3 = currentTheme.CardBg
 				Frame.BackgroundTransparency = 0.45
-				Frame.Parent = Scroll
-
+				Frame.ClipsDescendants = true
 				Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 12)
+
 				local Stroke = Instance.new("UIStroke", Frame)
 				Stroke.Color = currentTheme.Stroke
 				Stroke.Transparency = currentTheme.StrokeTransparency
 
-				AttachCardInteractivity(Frame, Stroke)
+				local Title = Instance.new("TextLabel", Frame)
+				Title.Size = UDim2.new(0.5, -10, 1, 0)
+				Title.Position = UDim2.new(0, 12, 0, 0)
+				Title.BackgroundTransparency = 1
+				Title.Text = text
+				Title.TextColor3 = currentTheme.TextPrimary
+				Title.Font = Enum.Font.GothamMedium
+				Title.TextSize = 13
+				Title.TextXAlignment = Enum.TextXAlignment.Left
 
-				local TitleLbl = Instance.new("TextLabel")
-				TitleLbl.Size = UDim2.new(0.5, -10, 1, 0)
-				TitleLbl.Position = UDim2.new(0, 12, 0, 0)
-				TitleLbl.BackgroundTransparency = 1
-				TitleLbl.Text = text
-				TitleLbl.TextColor3 = currentTheme.TextPrimary
-				TitleLbl.Font = Enum.Font.GothamMedium
-				TitleLbl.TextSize = 13
-				TitleLbl.TextXAlignment = Enum.TextXAlignment.Left
-				TitleLbl.Parent = Frame
+				local RightLbl = Instance.new("TextLabel", Frame)
+				RightLbl.Size = UDim2.new(0, 80, 1, 0)
+				RightLbl.Position = UDim2.new(1, -92, 0, 0)
+				RightLbl.BackgroundTransparency = 1
+				RightLbl.Text = rightLabel or "button"
+				RightLbl.TextColor3 = Color3.fromRGB(0, 122, 255)
+				RightLbl.Font = Enum.Font.GothamMedium
+				RightLbl.TextSize = 11
+				RightLbl.TextXAlignment = Enum.TextXAlignment.Right
 
-				local Btn = Instance.new("TextButton")
+				local Btn = Instance.new("TextButton", Frame)
 				Btn.Size = UDim2.new(1, 0, 1, 0)
 				Btn.BackgroundTransparency = 1
 				Btn.Text = ""
-				Btn.Parent = Frame
 
 				Btn.MouseButton1Click:Connect(function()
-					CreateRipple(Frame, Mouse.X, Mouse.Y)
 					callback()
 				end)
 			end
 
 			function TabAPI:AddToggle(text, defaultState, callback)
 				local state = defaultState or false
-				local Frame = Instance.new("Frame")
+				local Frame = Instance.new("Frame", Scroll)
 				Frame.Size = UDim2.new(1, -8, 0, 42)
 				Frame.BackgroundColor3 = currentTheme.CardBg
 				Frame.BackgroundTransparency = 0.45
-				Frame.Parent = Scroll
-
 				Instance.new("UICorner", Frame).CornerRadius = UDim.new(0, 12)
+
 				local Stroke = Instance.new("UIStroke", Frame)
 				Stroke.Color = currentTheme.Stroke
 				Stroke.Transparency = currentTheme.StrokeTransparency
 
-				AttachCardInteractivity(Frame, Stroke)
-
-				local Label = Instance.new("TextLabel")
+				local Label = Instance.new("TextLabel", Frame)
 				Label.Size = UDim2.new(1, -60, 1, 0)
 				Label.Position = UDim2.new(0, 12, 0, 0)
 				Label.BackgroundTransparency = 1
@@ -515,23 +534,18 @@ function MalaikatLib:CreateWindow(Settings)
 				Label.Font = Enum.Font.GothamMedium
 				Label.TextSize = 13
 				Label.TextXAlignment = Enum.TextXAlignment.Left
-				Label.Parent = Frame
 
-				local ToggleBtn = Instance.new("TextButton")
+				local ToggleBtn = Instance.new("TextButton", Frame)
 				ToggleBtn.Size = UDim2.new(0, 44, 0, 24)
 				ToggleBtn.Position = UDim2.new(1, -54, 0.5, -12)
 				ToggleBtn.BackgroundColor3 = state and Color3.fromRGB(52, 199, 89) or Color3.fromRGB(120, 120, 128)
 				ToggleBtn.Text = ""
-				ToggleBtn.Parent = Frame
-
 				Instance.new("UICorner", ToggleBtn).CornerRadius = UDim.new(1, 0)
 
-				local Circle = Instance.new("Frame")
+				local Circle = Instance.new("Frame", ToggleBtn)
 				Circle.Size = UDim2.new(0, 20, 0, 20)
 				Circle.Position = state and UDim2.new(1, -22, 0.5, -10) or UDim2.new(0, 2, 0.5, -10)
 				Circle.BackgroundColor3 = Color3.fromRGB(255, 255, 255)
-				Circle.Parent = ToggleBtn
-
 				Instance.new("UICorner", Circle).CornerRadius = UDim.new(1, 0)
 
 				ToggleBtn.MouseButton1Click:Connect(function()
@@ -549,22 +563,40 @@ function MalaikatLib:CreateWindow(Settings)
 
 			return TabAPI
 		end
+
+		-- Window Minimizing / Closing Engine
+		MinimizeBtn.MouseButton1Click:Connect(function()
+			isMinimized = not isMinimized
+			local targetHeight = isMinimized and 46 or 410
+			Sidebar.Visible = not isMinimized
+			ContentArea.Visible = not isMinimized
+			SmoothTween(MainFrame, {Size = UDim2.new(0, 600, 0, targetHeight)})
+		end)
+
+		local isOpen = true
+		local function toggleUI()
+			isOpen = not isOpen
+			MainFrame.Visible = isOpen
+		end
+
+		CloseBtn.MouseButton1Click:Connect(toggleUI)
+		FloatingBtn.MouseButton1Click:Connect(toggleUI)
 	end
 
-	-- Key System Execution
-	if KeySystem then
-		SubmitKeyBtn.MouseButton1Click:Connect(function()
-			if KeyInputBox.Text == CorrectKey then
+	-- Run Key System Check
+	if UseKeySystem then
+		SubmitBtn.MouseButton1Click:Connect(function()
+			if KeyInput.Text == CorrectKey then
+				Notify("Success", "Key Benar!", 2)
 				KeyFrame:Destroy()
 				loadMainUI()
 			else
-				Notify("Security", "Key Salah!", 2)
+				Notify("Error", "Key Salah!", 2)
 			end
 		end)
-
-		GetKeyBtn.MouseButton1Click:Connect(function()
+		GetLinkBtn.MouseButton1Click:Connect(function()
 			if setclipboard then setclipboard(KeyLink) end
-			Notify("Key System", "Link disalin ke clipboard!", 2)
+			Notify("Get Link", "Link disalin ke clipboard!", 3)
 		end)
 	else
 		KeyFrame:Destroy()
