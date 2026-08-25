@@ -10,6 +10,7 @@
 
 ### 🚀 Panduan Integrasi Skrip
 
+```lua
 local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))
 
 local Window = MalaikatLib:CreateWindow({
@@ -32,10 +33,13 @@ end)
 MainTab:AddSlider("WalkSpeed Modifier", 16, 250, 16, function(Value)
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
 end)
+```
 
 ### 👁️ Preview UI
 
+```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))
+```
 
 ---
 
@@ -45,6 +49,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/M
 
 ### 🚀 Integration Guide
 
+```lua
 local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))
 
 local Window = MalaikatLib:CreateWindow({
@@ -67,10 +72,13 @@ end)
 MainTab:AddSlider("WalkSpeed Modifier", 16, 250, 16, function(Value)
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
 end)
+```
 
 ### 👁️ Preview Script
 
+```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))
+```
 
 ---
 
@@ -80,6 +88,7 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/M
 
 ### 🚀 Panduan Penggunaan
 
+```lua
 local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))
 
 local Window = MalaikatLib:CreateWindow({
@@ -102,7 +111,10 @@ end)
 MainTab:AddSlider("WalkSpeed Modifier", 16, 250, 16, function(Value)
     game.Players.LocalPlayer.Character.Humanoid.WalkSpeed = Value
 end)
+```
 
 ### 👁️ Pratonton (Preview)
 
+```lua
 loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))
+```
