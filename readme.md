@@ -11,13 +11,13 @@
 ### 🚀 Panduan Integrasi Skrip
 
 ```lua
-local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))
+local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua)"))
 
 local Window = MalaikatLib:CreateWindow({
     Title = "Malaikat HUB v2.0",
     KeySystem = true,
     Key = "Malaikat2026",
-    KeyLink = "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
+    KeyLink = "[https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY](https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY)"
 })
 
 local MainTab = Window:CreateTab("Main Features")
@@ -38,7 +38,7 @@ end)
 ### 👁️ Preview UI
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))
+loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua)"))
 ```
 
 ---
@@ -50,13 +50,13 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/M
 ### 🚀 Integration Guide
 
 ```lua
-local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))
+local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua)"))
 
 local Window = MalaikatLib:CreateWindow({
     Title = "Malaikat HUB v2.0",
     KeySystem = true,
     Key = "Malaikat2026",
-    KeyLink = "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
+    KeyLink = "[https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY](https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY)"
 })
 
 local MainTab = Window:CreateTab("Main Features")
@@ -77,7 +77,7 @@ end)
 ### 👁️ Preview Script
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))
+loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua)"))
 ```
 
 ---
@@ -89,13 +89,13 @@ loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/M
 ### 🚀 Panduan Penggunaan
 
 ```lua
-local MalaikatLib = loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/library.lua"))
+local MalaikatLib = loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/library.lua)"))
 
 local Window = MalaikatLib:CreateWindow({
     Title = "Malaikat HUB v2.0",
     KeySystem = true,
     Key = "Malaikat2026",
-    KeyLink = "https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY"
+    KeyLink = "[https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY](https://github.com/MalaikatHubOFFICIAL/MalaikatLIBRARY)"
 })
 
 local MainTab = Window:CreateTab("Main Features")
@@ -116,5 +116,5 @@ end)
 ### 👁️ Pratonton (Preview)
 
 ```lua
-loadstring(game:HttpGet("https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/main/PREVIEW.lua"))
+loadstring(game:HttpGet("[https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua](https://raw.githubusercontent.com/MalaikatHubOFFICIAL/MalaikatLIBRARY/refs/heads/main/PREVIEW.lua)"))
 ```
