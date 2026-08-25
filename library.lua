@@ -1,5 +1,5 @@
 --==============================================================================
---          MALAIKAT UI - LIBRARY ENGINE (iOS 26 ULTRA GLASS)
+--          MALAIKAT UI - LIBRARY ENGINE (iOS 26 ULTRA GLASS COMPLETE)
 --==============================================================================
 
 local MalaikatLib = {}
@@ -50,31 +50,10 @@ function MalaikatLib:CreateWindow(Settings)
 			Stroke = Color3.fromRGB(255, 255, 255),
 			StrokeTransparency = 0.88,
 			InputBg = Color3.fromRGB(16, 17, 24)
-		},
-		Light = {
-			MainBg = Color3.fromRGB(245, 245, 250),
-			MainBgTransparency = 0.1,
-			SideBg = Color3.fromRGB(230, 230, 240),
-			CardBg = Color3.fromRGB(255, 255, 255),
-			SelectorBg = Color3.fromRGB(0, 122, 255),
-			TextPrimary = Color3.fromRGB(10, 10, 15),
-			TextSecondary = Color3.fromRGB(100, 105, 120),
-			Stroke = Color3.fromRGB(0, 0, 0),
-			StrokeTransparency = 0.9,
-			InputBg = Color3.fromRGB(235, 235, 245)
 		}
 	}
 
-	local currentThemeName = "Dark"
 	local currentTheme = Themes.Dark
-
-	local ThemeElements = {
-		Cards = {},
-		Strokes = {},
-		TextPrimary = {},
-		TextSecondary = {},
-		InputBoxes = {}
-	}
 
 	-- Animation Math Helpers
 	local FastTweenInfo = TweenInfo.new(0.18, Enum.EasingStyle.Quart, Enum.EasingDirection.Out)
@@ -582,6 +561,20 @@ function MalaikatLib:CreateWindow(Settings)
 
 		local TabAPI = {}
 
+		-- 1. SECTION HEADER
+		function TabAPI:AddSectionHeader(text)
+			local Label = Instance.new("TextLabel")
+			Label.Size = UDim2.new(1, -5, 0, 20)
+			Label.BackgroundTransparency = 1
+			Label.Text = string.upper(text)
+			Label.TextColor3 = currentTheme.TextSecondary
+			Label.TextSize = 11
+			Label.Font = Enum.Font.GothamBold
+			Label.TextXAlignment = Enum.TextXAlignment.Left
+			Label.Parent = Scroll
+		end
+
+		-- 2. BUTTON
 		function TabAPI:AddButton(text, rightLabel, callback)
 			local Frame = Instance.new("Frame")
 			Frame.Size = UDim2.new(1, -8, 0, 42)
@@ -638,6 +631,7 @@ function MalaikatLib:CreateWindow(Settings)
 			end)
 		end
 
+		-- 3. TOGGLE
 		function TabAPI:AddToggle(text, defaultState, callback)
 			local state = defaultState or false
 			local Frame = Instance.new("Frame")
@@ -703,6 +697,7 @@ function MalaikatLib:CreateWindow(Settings)
 			end)
 		end
 
+		-- 4. SLIDER
 		function TabAPI:AddSlider(text, min, max, defaultVal, callback)
 			local Frame = Instance.new("Frame")
 			Frame.Size = UDim2.new(1, -8, 0, 44)
@@ -794,6 +789,275 @@ function MalaikatLib:CreateWindow(Settings)
 				if isLocalDragging and (input.UserInputType == Enum.UserInputType.MouseMovement or input.UserInputType == Enum.UserInputType.Touch) then
 					updateSlider(input)
 				end
+			end)
+		end
+
+		-- 5. DROPDOWN
+		function TabAPI:AddDropdown(text, options, defaultOpt, callback)
+			local isOpen = false
+			local currentSelected = defaultOpt or options[1]
+
+			local Frame = Instance.new("Frame")
+			Frame.Size = UDim2.new(1, -8, 0, 42)
+			Frame.BackgroundColor3 = currentTheme.CardBg
+			Frame.BackgroundTransparency = 0.45
+			Frame.ClipsDescendants = true
+			Frame.Parent = Scroll
+
+			local FrameCorner = Instance.new("UICorner")
+			FrameCorner.CornerRadius = UDim.new(0, 12)
+			FrameCorner.Parent = Frame
+
+			local FrameStroke = Instance.new("UIStroke")
+			FrameStroke.Color = currentTheme.Stroke
+			FrameStroke.Thickness = 1
+			FrameStroke.Transparency = currentTheme.StrokeTransparency
+			FrameStroke.Parent = Frame
+
+			AttachCardInteractivity(Frame, FrameStroke)
+
+			local HeaderBtn = Instance.new("TextButton")
+			HeaderBtn.Size = UDim2.new(1, 0, 0, 42)
+			HeaderBtn.BackgroundTransparency = 1
+			HeaderBtn.Text = ""
+			HeaderBtn.Parent = Frame
+
+			local Label = Instance.new("TextLabel")
+			Label.Size = UDim2.new(0.5, 0, 1, 0)
+			Label.Position = UDim2.new(0, 12, 0, 0)
+			Label.BackgroundTransparency = 1
+			Label.Text = text
+			Label.TextColor3 = currentTheme.TextPrimary
+			Label.Font = Enum.Font.GothamMedium
+			Label.TextSize = 13
+			Label.TextXAlignment = Enum.TextXAlignment.Left
+			Label.Parent = HeaderBtn
+
+			local SelectedLbl = Instance.new("TextLabel")
+			SelectedLbl.Size = UDim2.new(0, 120, 1, 0)
+			SelectedLbl.Position = UDim2.new(1, -132, 0, 0)
+			SelectedLbl.BackgroundTransparency = 1
+			SelectedLbl.Text = currentSelected
+			SelectedLbl.TextColor3 = Color3.fromRGB(0, 122, 255)
+			SelectedLbl.Font = Enum.Font.GothamMedium
+			SelectedLbl.TextSize = 11
+			SelectedLbl.TextXAlignment = Enum.TextXAlignment.Right
+			SelectedLbl.Parent = HeaderBtn
+
+			local OptionHolder = Instance.new("Frame")
+			OptionHolder.Size = UDim2.new(1, -24, 0, 0)
+			OptionHolder.Position = UDim2.new(0, 12, 0, 42)
+			OptionHolder.BackgroundTransparency = 1
+			OptionHolder.ClipsDescendants = true
+			OptionHolder.Parent = Frame
+
+			local OptionList = Instance.new("UIListLayout")
+			OptionList.Padding = UDim.new(0, 4)
+			OptionList.Parent = OptionHolder
+
+			local function toggleDropdown()
+				isOpen = not isOpen
+				local totalHeight = isOpen and (42 + (#options * 30) + 8) or 42
+				SmoothTween(OptionHolder, {Size = UDim2.new(1, -24, 0, isOpen and (#options * 30 + 4) or 0)})
+				SmoothTween(Frame, {Size = UDim2.new(1, -8, 0, totalHeight)})
+			end
+
+			HeaderBtn.MouseButton1Click:Connect(toggleDropdown)
+
+			for idx, opt in ipairs(options) do
+				local OptBtn = Instance.new("TextButton")
+				OptBtn.Size = UDim2.new(1, 0, 0, 26)
+				OptBtn.BackgroundColor3 = currentTheme.InputBg
+				OptBtn.Text = "  " .. opt
+				OptBtn.TextColor3 = (opt == currentSelected) and Color3.fromRGB(0, 122, 255) or currentTheme.TextSecondary
+				OptBtn.Font = Enum.Font.Gotham
+				OptBtn.TextSize = 11
+				OptBtn.TextXAlignment = Enum.TextXAlignment.Left
+				OptBtn.Parent = OptionHolder
+
+				local OptCorner = Instance.new("UICorner")
+				OptCorner.CornerRadius = UDim.new(0, 8)
+				OptCorner.Parent = OptBtn
+
+				OptBtn.MouseButton1Click:Connect(function()
+					currentSelected = opt
+					SelectedLbl.Text = opt
+					callback(opt)
+					toggleDropdown()
+				end)
+			end
+		end
+
+		-- 6. INPUT BOX
+		function TabAPI:AddInput(text, placeholderText, callback)
+			local Frame = Instance.new("Frame")
+			Frame.Size = UDim2.new(1, -8, 0, 42)
+			Frame.BackgroundColor3 = currentTheme.CardBg
+			Frame.BackgroundTransparency = 0.45
+			Frame.Parent = Scroll
+
+			local FrameCorner = Instance.new("UICorner")
+			FrameCorner.CornerRadius = UDim.new(0, 12)
+			FrameCorner.Parent = Frame
+
+			local FrameStroke = Instance.new("UIStroke")
+			FrameStroke.Color = currentTheme.Stroke
+			FrameStroke.Thickness = 1
+			FrameStroke.Transparency = currentTheme.StrokeTransparency
+			FrameStroke.Parent = Frame
+
+			AttachCardInteractivity(Frame, FrameStroke)
+
+			local Label = Instance.new("TextLabel")
+			Label.Size = UDim2.new(0.5, 0, 1, 0)
+			Label.Position = UDim2.new(0, 12, 0, 0)
+			Label.BackgroundTransparency = 1
+			Label.Text = text
+			Label.TextColor3 = currentTheme.TextPrimary
+			Label.Font = Enum.Font.GothamMedium
+			Label.TextSize = 13
+			Label.TextXAlignment = Enum.TextXAlignment.Left
+			Label.Parent = Frame
+
+			local InputBox = Instance.new("TextBox")
+			InputBox.Size = UDim2.new(0, 140, 0, 28)
+			InputBox.Position = UDim2.new(1, -152, 0.5, -14)
+			InputBox.BackgroundColor3 = currentTheme.InputBg
+			InputBox.PlaceholderText = placeholderText or "Type here..."
+			InputBox.PlaceholderColor3 = Color3.fromRGB(140, 140, 150)
+			InputBox.Text = ""
+			InputBox.TextColor3 = currentTheme.TextPrimary
+			InputBox.Font = Enum.Font.Gotham
+			InputBox.TextSize = 11
+			InputBox.Parent = Frame
+
+			local InputCorner = Instance.new("UICorner")
+			InputCorner.CornerRadius = UDim.new(0, 8)
+			InputCorner.Parent = InputBox
+
+			InputBox.FocusLost:Connect(function(enterPressed)
+				callback(InputBox.Text)
+			end)
+		end
+
+		-- 7. COLOR PICKER
+		function TabAPI:AddColorPicker(text, defaultColor, callback)
+			local Frame = Instance.new("Frame")
+			Frame.Size = UDim2.new(1, -8, 0, 42)
+			Frame.BackgroundColor3 = currentTheme.CardBg
+			Frame.BackgroundTransparency = 0.45
+			Frame.Parent = Scroll
+
+			local FrameCorner = Instance.new("UICorner")
+			FrameCorner.CornerRadius = UDim.new(0, 12)
+			FrameCorner.Parent = Frame
+
+			local FrameStroke = Instance.new("UIStroke")
+			FrameStroke.Color = currentTheme.Stroke
+			FrameStroke.Thickness = 1
+			FrameStroke.Transparency = currentTheme.StrokeTransparency
+			FrameStroke.Parent = Frame
+
+			AttachCardInteractivity(Frame, FrameStroke)
+
+			local Label = Instance.new("TextLabel")
+			Label.Size = UDim2.new(0.5, 0, 1, 0)
+			Label.Position = UDim2.new(0, 12, 0, 0)
+			Label.BackgroundTransparency = 1
+			Label.Text = text
+			Label.TextColor3 = currentTheme.TextPrimary
+			Label.Font = Enum.Font.GothamMedium
+			Label.TextSize = 13
+			Label.TextXAlignment = Enum.TextXAlignment.Left
+			Label.Parent = Frame
+
+			local ColorBox = Instance.new("TextButton")
+			ColorBox.Size = UDim2.new(0, 38, 0, 22)
+			ColorBox.Position = UDim2.new(1, -50, 0.5, -11)
+			ColorBox.BackgroundColor3 = defaultColor or Color3.fromRGB(0, 122, 255)
+			ColorBox.Text = ""
+			ColorBox.Parent = Frame
+
+			local ColorCorner = Instance.new("UICorner")
+			ColorCorner.CornerRadius = UDim.new(0, 8)
+			ColorCorner.Parent = ColorBox
+
+			local colors = {
+				Color3.fromRGB(0, 122, 255),
+				Color3.fromRGB(52, 199, 89),
+				Color3.fromRGB(255, 59, 48),
+				Color3.fromRGB(255, 149, 0),
+				Color3.fromRGB(175, 82, 222)
+			}
+			local colorIdx = 1
+
+			ColorBox.MouseButton1Click:Connect(function()
+				colorIdx = (colorIdx % #colors) + 1
+				local newCol = colors[colorIdx]
+				SpringTween(ColorBox, {BackgroundColor3 = newCol})
+				callback(newCol)
+			end)
+		end
+
+		-- 8. KEYBIND
+		function TabAPI:AddKeybind(text, defaultKey, callback)
+			local Frame = Instance.new("Frame")
+			Frame.Size = UDim2.new(1, -8, 0, 42)
+			Frame.BackgroundColor3 = currentTheme.CardBg
+			Frame.BackgroundTransparency = 0.45
+			Frame.Parent = Scroll
+
+			local FrameCorner = Instance.new("UICorner")
+			FrameCorner.CornerRadius = UDim.new(0, 12)
+			FrameCorner.Parent = Frame
+
+			local FrameStroke = Instance.new("UIStroke")
+			FrameStroke.Color = currentTheme.Stroke
+			FrameStroke.Thickness = 1
+			FrameStroke.Transparency = currentTheme.StrokeTransparency
+			FrameStroke.Parent = Frame
+
+			AttachCardInteractivity(Frame, FrameStroke)
+
+			local Label = Instance.new("TextLabel")
+			Label.Size = UDim2.new(0.5, 0, 1, 0)
+			Label.Position = UDim2.new(0, 12, 0, 0)
+			Label.BackgroundTransparency = 1
+			Label.Text = text
+			Label.TextColor3 = currentTheme.TextPrimary
+			Label.Font = Enum.Font.GothamMedium
+			Label.TextSize = 13
+			Label.TextXAlignment = Enum.TextXAlignment.Left
+			Label.Parent = Frame
+
+			local KeyBtn = Instance.new("TextButton")
+			KeyBtn.Size = UDim2.new(0, 36, 0, 24)
+			KeyBtn.Position = UDim2.new(1, -48, 0.5, -12)
+			KeyBtn.BackgroundColor3 = currentTheme.InputBg
+			KeyBtn.Text = defaultKey or "T"
+			KeyBtn.TextColor3 = Color3.fromRGB(0, 122, 255)
+			KeyBtn.Font = Enum.Font.GothamBold
+			KeyBtn.TextSize = 11
+			KeyBtn.Parent = Frame
+
+			local KeyCorner = Instance.new("UICorner")
+			KeyCorner.CornerRadius = UDim.new(0, 8)
+			KeyCorner.Parent = KeyBtn
+
+			local listening = false
+			KeyBtn.MouseButton1Click:Connect(function()
+				if listening then return end
+				listening = true
+				KeyBtn.Text = "..."
+				local conn
+				conn = UserInputService.InputBegan:Connect(function(input)
+					if input.UserInputType == Enum.UserInputType.Keyboard then
+						KeyBtn.Text = input.KeyCode.Name
+						listening = false
+						conn:Disconnect()
+						callback(input.KeyCode)
+					end
+				end)
 			end)
 		end
 
