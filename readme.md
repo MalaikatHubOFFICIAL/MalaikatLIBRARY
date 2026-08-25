@@ -1,6 +1,6 @@
 # 👼 MalaikatUI Library
 
-[ Indonesia ](#-bahasa-indonesia) | [ English ](#-english) | [ Melayu ](#-bahasa-melayu)
+[ 🇮🇩 Bahasa Indonesia ](#-bahasa-indonesia) | [ 🇬🇧 English ](#--english) | [ 🇲🇾 Bahasa Melayu ](#--bahasa-melayu)
 
 ---
 
